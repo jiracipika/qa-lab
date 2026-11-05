@@ -68,4 +68,4 @@ logic are pure, tested modules under `src/lib`, `src/games`, and `src/sandbox`. 
 content lives in `src/content` as typed, validated data records with stable ids; tests assert
 the content contract (counts, unique ids, complete distractor explanations).
 
-Deployed on Vercel (SPA rewrites configured in `vercel.json`).
+Deployed on Vercel (SPA rewrites configured in `vercel.json`): **https://qa-lab-jiracipika.vercel.app**

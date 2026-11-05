@@ -80,6 +80,9 @@ Working state for AI sessions and contributors. Update after each milestone.
 
 ## Deployment
 
-- GitHub: https://github.com/jiracipika/qa-lab (pushes to `main` auto-deploy).
-- Vercel production: https://qa-lab.vercel.app (project `qa-lab`, framework vite, SPA rewrites).
-- Verified 2026-11-05: root and /modules return 200 on the production URL.
+- GitHub: https://github.com/jiracipika/qa-lab (pushes to `main` auto-deploy via the connected Vercel GitHub app).
+- Vercel production: **https://qa-lab-jiracipika.vercel.app** (project `qa-lab`, framework vite, SPA rewrites).
+- The team's auto alias (`qa-lab-jiracipikas-projects.vercel.app`) is behind Vercel Standard
+  Deployment Protection (SSO redirect); the explicitly attached domain above serves publicly.
+- Note: `qa-lab.vercel.app` belongs to a DIFFERENT Vercel account - do not use it.
+- Verified 2026-11-05: /, /modules, /sandbox all 200 on the production domain after a git push.
