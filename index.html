@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="QA Lab - a personal learning workspace for software testing: lessons, flashcards, quizzes, challenges, minigames, and a bug-hunting sandbox." />
+    <meta name="color-scheme" content="light dark" />
+    <title>QA Lab</title>
+    <script>
+      // Apply saved theme + motion preference before first paint to avoid a flash.
+      try {
+        var raw = localStorage.getItem("qa-lab:v1");
+        var theme = null, motion = null;
+        if (raw) {
+          try {
+            var parsed = JSON.parse(raw);
+            theme = parsed && parsed.preferences && parsed.preferences.theme;
+            motion = parsed && parsed.preferences && parsed.preferences.motion;
+          } catch (e) {}
+        }
+        if (!theme) {
+          theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
+        if (motion === "reduced") document.documentElement.dataset.motion = "reduced";
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>QA Lab needs JavaScript to run. All data stays in your browser.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
