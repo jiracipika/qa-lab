@@ -80,5 +80,6 @@ Working state for AI sessions and contributors. Update after each milestone.
 
 ## Deployment
 
-- GitHub: pushed to main (see README for repo link after first push).
-- Vercel: production deploy from main via vercel.json (framework: vite).
+- GitHub: https://github.com/jiracipika/qa-lab (pushes to `main` auto-deploy).
+- Vercel production: https://qa-lab.vercel.app (project `qa-lab`, framework vite, SPA rewrites).
+- Verified 2026-11-05: root and /modules return 200 on the production URL.
