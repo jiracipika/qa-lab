@@ -31,7 +31,7 @@ describe("learner journey", () => {
     const view = renderApp();
 
     // 1. Onboarding: pick a goal
-    expect(screen.getByRole("dialog", { name: /Welcome to QA Lab/ })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: /Welcome to QABrew/ })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Learn QA fundamentals/ }));
     await user.click(screen.getByRole("button", { name: /Start: Learn QA fundamentals/ }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();

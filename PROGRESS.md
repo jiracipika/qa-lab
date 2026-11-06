@@ -1,6 +1,30 @@
-# QA Lab - progress file
+# QABrew - progress file
 
 Working state for AI sessions and contributors. Update after each milestone.
+Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
+
+## Completed (release 1.1 "QABrew" - 2026-11-06)
+
+- Rebrand: QA Lab -> QABrew ("the QA workbook") across UI, title/meta, favicon
+  (flask + check SVG), onboarding, docs. Storage key `qa-lab:v1` and export envelope
+  `app: "qa-lab"` intentionally unchanged (data continuity).
+- Design system rewrite (styles.css): MedBrewery-verified tokens - paper #faf8f1,
+  ink #0f172b/#253344, blue #2563eb/#3080ff, dark "midnight ink" theme with cream
+  text; DM Serif Display + Plus Jakarta Sans + Caveat self-hosted (@fontsource);
+  lucide-react nav icons; hand-drawn sketch border on hero/empty/flashcards/playground;
+  graph paper under diagrams; squiggle-underlined eyebrow per page; blue glow on
+  primary-CTA hover. See DESIGN.md for the full contract.
+- Dashboard restructure: dominant "Continue learning" hero card, due/challenge/mistakes
+  row, new Boundary playground (RangeLab) - live 18-65 field with the same tested
+  classifier as Boundary Hunter, text verdicts + staggered tick labels (no colour-alone).
+- Migration banner: old origin (qa-lab-jiracipika.vercel.app) shows a dismissible
+  "moved + how to export/import" notice; no auto-redirect.
+- Settings: destructive reset moved to a visually separated danger zone; theme labels
+  (Light paper / Dark midnight ink); cross-device data note.
+- Mobile drawer closes on Escape; lesson nav uses icon buttons; quiz/challenge pages
+  get eyebrows.
+- Domain: qabrew.vercel.app claimed on the Vercel project 2026-11-06 (first-come
+  namespace); old domain keeps serving.
 
 ## Completed (release 1.0 - 2026-11-05)
 
@@ -38,25 +62,30 @@ Working state for AI sessions and contributors. Update after each milestone.
 - Settings: goal, theme, motion, export download, import with validation + overwrite
   confirmation, reset with confirmation, storage-error banner.
 
-## Verification (2026-11-05)
+## Verification (2026-11-06, release 1.1)
 
-- `npx tsc -b` clean; `npx vite build` succeeds (dist, ~165 kB gzip JS).
-- `npx vitest run`: 59/59 tests pass across 6 files:
-  grading (shuffle invariance, multi-select sets), SRS schedule + streak, storage +
-  export/import round trips + invalid-import errors, content contract (counts, unique ids,
-  card mix, diagram refs, challenge-kind coverage), game engines (boundary evaluation incl.
-  duplicate-class penalties, sorter, detective evidence rules, all 6 sandbox defects real in
-  the engine), and a jsdom end-to-end journey: onboard -> lesson complete -> quiz answer +
-  explanation -> card flip + rating -> Boundary Hunter perfect round -> sandbox transfer +
-  defect report filed -> reload persists -> export/import round trip.
-- Content check on Roadmap page mirrors the same validation (currently 0 issues).
-- NOT run: real-browser visual pass (desktop/mobile screenshots), screen-reader pass.
-  DOM-level e2e covers behaviour; layout was reviewed in code only. Honest limitation.
+- `npx tsc -b` clean; `npx vite build` succeeds (~171 kB gzip JS; fonts load per-subset).
+- `npx vitest run`: 62/62 tests across 7 files (adds tests/rangelab.test.tsx: classifier
+  regions, inclusive validity, live verdict interaction). e2e journey updated for the
+  QABrew onboarding dialog.
+- Real-browser pass (in-app Chromium, vite preview): desktop 1440 (dashboard hero,
+  lesson page, onboarding dialog), mobile 390 (topbar/hero stack, no horizontal overflow:
+  scrollWidth 375 <= 390), dark theme, all 12 routes walked via client-side nav with
+  zero runtime errors. Vision-model critiques addressed: range-line tick labels staggered
+  + viewBox widened, redundant corner captions removed, squiggle moved from wrapping h1
+  to the eyebrow, light-theme --bad/--warn darkened to pass 4.5:1 on their tints
+  (independent contrast audit: all token pairs now pass AA; earlier chip-bad 4.10 and
+  chip-warn 4.42 were the two failures fixed).
+- NOT run: screen-reader pass; full WCAG manual audit. Keyboard focus order spot-checked
+  in the browser (brand -> nav links); all interactive elements have accessible names
+  (independent agent review).
+- One test-only fix: srs.test no longer compares newCardState's due date to a hardcoded
+  calendar day (broke at UTC midnight).
 
 ## Commands
 
 - `npm run dev` - local dev server
-- `npm test` - all automated checks
+- `npm test` - all automated checks (62)
 - `npm run build` - typecheck + production build
 - Deploy: push to GitHub `main`; Vercel builds automatically (vercel.json: vite, SPA rewrites).
 
@@ -81,8 +110,11 @@ Working state for AI sessions and contributors. Update after each milestone.
 ## Deployment
 
 - GitHub: https://github.com/jiracipika/qa-lab (pushes to `main` auto-deploy via the connected Vercel GitHub app).
-- Vercel production: **https://qa-lab-jiracipika.vercel.app** (project `qa-lab`, framework vite, SPA rewrites).
+- Vercel production: **https://qabrew.vercel.app** (project `qa-lab`, explicit public domain,
+  claimed 2026-11-06; vercel.app names are first-come-first-served and lowercase).
+- Previous address **https://qa-lab-jiracipika.vercel.app** still serves the app (same
+  project) with an in-app migration banner: export progress there, import at the new
+  address. No auto-redirect (localStorage is per-origin).
 - The team's auto alias (`qa-lab-jiracipikas-projects.vercel.app`) is behind Vercel Standard
-  Deployment Protection (SSO redirect); the explicitly attached domain above serves publicly.
+  Deployment Protection (SSO redirect); explicitly attached project domains serve publicly.
 - Note: `qa-lab.vercel.app` belongs to a DIFFERENT Vercel account - do not use it.
-- Verified 2026-11-05: /, /modules, /sandbox all 200 on the production domain after a git push.

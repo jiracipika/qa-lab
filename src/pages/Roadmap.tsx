@@ -15,6 +15,7 @@ export function RoadmapPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Where this goes</div>
         <h1>Curriculum roadmap</h1>
         <p className="lede">
           Available now: three complete starter modules. Everything below is <strong>planned, not playable</strong> -

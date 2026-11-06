@@ -27,6 +27,7 @@ export function SandboxPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">The workbench</div>
         <h1>Northlake Sandbox Bank</h1>
         <p className="lede">
           A fictional retail bank with synthetic data and a small documented set of planted defects. Test against the

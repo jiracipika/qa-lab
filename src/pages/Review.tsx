@@ -16,6 +16,7 @@ export function ReviewPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Spaced repetition</div>
         <h1>Review</h1>
         <p className="lede">
           Concept cards follow a documented spaced-repetition schedule. Test-case cards are manual execution records -

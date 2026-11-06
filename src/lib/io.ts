@@ -36,16 +36,16 @@ export function validateImport(text: string): ImportResult {
     return { ok: false, errors: [`Not valid JSON: ${(e as Error).message}`] };
   }
   if (typeof parsed !== "object" || parsed === null) {
-    return { ok: false, errors: ["Expected a JSON object exported from QA Lab."] };
+    return { ok: false, errors: ["Expected a JSON object exported from QABrew."] };
   }
   const env = parsed as Partial<ExportEnvelope>;
   if (env.app !== EXPORT_APP) {
-    errors.push(`Field "app" must be "${EXPORT_APP}" (found ${JSON.stringify(env.app)}). This does not look like a QA Lab export.`);
+    errors.push(`Field "app" must be "${EXPORT_APP}" (found ${JSON.stringify(env.app)}). This does not look like a QABrew export.`);
   }
   if (typeof env.version !== "number") {
     errors.push('Field "version" is missing or not a number.');
   } else if (env.version > EXPORT_VERSION) {
-    errors.push(`Export version ${env.version} is newer than this app supports (${EXPORT_VERSION}). Update QA Lab first.`);
+    errors.push(`Export version ${env.version} is newer than this app supports (${EXPORT_VERSION}). Update QABrew first.`);
   }
   if (typeof env.data !== "object" || env.data === null || Array.isArray(env.data)) {
     errors.push('Field "data" must be an object containing your progress.');

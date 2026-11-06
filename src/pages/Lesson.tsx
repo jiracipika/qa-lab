@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { moduleById } from "../content";
 import { useStore } from "../state/store";
 import { EmptyState, LessonBlocks } from "../components/ui";
@@ -30,9 +31,10 @@ export function LessonPage() {
         <Link to="/modules">Modules</Link> / <Link to={`/modules/${mod.id}`}>Module {mod.letter}</Link> / {lesson.title}
       </div>
       <div className="page-head">
+        <div className="eyebrow">Module {mod.letter} - Lesson {idx + 1} of {mod.lessons.length}</div>
         <h1>{lesson.title}</h1>
         <p className="lede">
-          Lesson {idx + 1} of {mod.lessons.length} - {lesson.minutes} min
+          {lesson.minutes} min read - {lesson.objectives[0]}
         </p>
       </div>
 
@@ -144,7 +146,7 @@ export function LessonPage() {
         <div className="lesson-nav">
           {prev ? (
             <Link className="btn" to={`/modules/${mod.id}/lessons/${prev.id}`}>
-              ← {prev.title}
+              <ArrowLeft size={15} aria-hidden /> {prev.title}
             </Link>
           ) : (
             <span />
@@ -159,11 +161,11 @@ export function LessonPage() {
           </button>
           {next ? (
             <Link className="btn btn-primary" to={`/modules/${mod.id}/lessons/${next.id}`}>
-              {next.title} →
+              {next.title} <ArrowRight size={15} aria-hidden />
             </Link>
           ) : (
             <Link className="btn btn-primary" to={`/modules/${mod.id}/quiz`}>
-              Finish with the quiz →
+              Finish with the quiz <ArrowRight size={15} aria-hidden />
             </Link>
           )}
         </div>

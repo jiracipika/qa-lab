@@ -13,6 +13,7 @@ export function ChallengesList() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Practise</div>
         <h1>Practical challenges</h1>
         <p className="lede">
           Exercises that mirror real QA work: test design, defect reporting, regression selection, API diagnosis,
@@ -82,6 +83,7 @@ export function ChallengePage() {
         <Link to="/challenges">Challenges</Link> / {challenge.title}
       </div>
       <div className="page-head">
+        <div className="eyebrow">Challenge - {challenge.kind.replace("-", " ")}</div>
         <h1>{challenge.title}</h1>
         <p className="lede">
           {KIND_LABEL[challenge.kind]} - {challenge.minutes} min - Module {mod.letter}

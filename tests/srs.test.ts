@@ -11,7 +11,8 @@ describe("reviewCard schedule", () => {
     const c = newCardState("card-1");
     expect(c.ease).toBe(2.5);
     expect(c.interval).toBe(0);
-    expect(c.due).toBe(dayKey(NOW));
+    // newCardState stamps the real current day (no now param), not the fixed NOW above.
+    expect(c.due).toBe(dayKey(new Date()));
   });
 
   it("Again: stays due today, ease drops, lapses increment", () => {

@@ -29,6 +29,7 @@ export function GamesPage() {
     return (
       <div className="fade-in">
         <div className="page-head">
+          <div className="eyebrow">Practise</div>
           <h1>Minigames</h1>
           <p className="lede">
             Short, focused exercises. Understanding beats speed - no timers unless noted. Scores are personal bests,

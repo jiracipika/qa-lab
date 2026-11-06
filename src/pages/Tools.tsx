@@ -26,6 +26,7 @@ export function ToolsPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Your notebook</div>
         <h1>Study tools</h1>
         <p className="lede">Everything personal: session plans, interview rehearsal, your mistakes, notes, and saved test cases.</p>
       </div>

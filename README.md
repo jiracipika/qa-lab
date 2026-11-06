@@ -1,10 +1,14 @@
-# QA Lab
+# QABrew
 
-A personal, interactive learning workspace for software testing: lessons, flashcards, quizzes,
-practical challenges, minigames, and a bug-hunting sandbox - all running locally in your browser.
-No accounts, no API keys, no backend. Progress stays in your browser's localStorage.
+**The QA workbook** - an illustrated learning workspace for software testing: lessons,
+flashcards, quizzes, practical challenges, minigames, and a bug-hunting sandbox, all
+running locally in your browser. No accounts, no API keys, no backend. Progress stays
+in your browser's localStorage.
 
-Built for QA engineers and SDETs (with a banking flavour) and for newcomers learning the craft.
+Built for QA engineers and SDETs (with a banking flavour) and for newcomers learning
+the craft. The design language - warm paper, dark ink, confident blue, hand-drawn
+margins - follows the MedBrewery family (medbrewery.ca) so the products can sit side
+by side; QABrew makes no affiliation claim.
 
 ## Quick start
 
@@ -16,7 +20,7 @@ npm run dev        # http://localhost:5173
 Other commands:
 
 ```bash
-npm test           # run the 59 automated checks (unit + content + games + e2e)
+npm test           # run the 62 automated checks (unit + content + games + e2e)
 npm run build      # typecheck + production build into dist/
 npm run preview    # serve the production build locally
 ```
@@ -28,6 +32,9 @@ npm run preview    # serve the production build locally
   - Module A - Testing fundamentals
   - Module B - Testing through development and delivery
   - Module C - Practical test design
+- **Boundary playground**: a live teaching widget - probe a numeric field that accepts
+  18-65 and watch exactly where it flips from valid to invalid (same engine as the
+  Boundary Hunter game).
 - **Review system**: concept cards on a documented spaced-repetition schedule (simplified
   SM-2, day-granular), plus test-case cards you execute and record pass/fail/blocked.
 - **Quizzes**: practice mode (instant explanations, including why each distractor is wrong)
@@ -48,11 +55,22 @@ npm run preview    # serve the production build locally
   invented mastery percentages), activity and optional streak, versioned export/import with
   validation, reset with confirmation.
 
+## Design system
+
+Tokens, typography, and layout rules live in `src/styles.css` and are documented in
+[DESIGN.md](DESIGN.md): paper/ink/blue palette, DM Serif Display + Plus Jakarta Sans +
+Caveat (all self-hosted via @fontsource - no external requests), lucide icons, a
+hand-drawn sketch border on primary surfaces, and a squiggle-underlined eyebrow on
+every page. Light (paper) and dark (midnight ink) themes, reduced-motion support,
+focus-visible styles.
+
 ## Data and privacy
 
-Everything is stored in `localStorage` under `qa-lab:v1` - device and browser specific.
-Use Settings -> Export to move progress between devices or keep a backup. Imports are
-validated and overwrite only after confirmation. No secrets, no tracking, no network calls.
+Everything is stored in `localStorage` under `qa-lab:v1` (the key predates the QABrew
+name and is kept so existing progress survives) - device and browser specific, and it
+does **not** move between addresses or devices by itself. Use Settings -> Export to
+back up or migrate progress; imports are validated and overwrite only after
+confirmation. No secrets, no tracking, no network calls.
 
 ## Content note
 
@@ -68,4 +86,4 @@ logic are pure, tested modules under `src/lib`, `src/games`, and `src/sandbox`. 
 content lives in `src/content` as typed, validated data records with stable ids; tests assert
 the content contract (counts, unique ids, complete distractor explanations).
 
-Deployed on Vercel (SPA rewrites configured in `vercel.json`): **https://qa-lab-jiracipika.vercel.app**
+Deployed on Vercel (SPA rewrites configured in `vercel.json`): **https://qabrew.vercel.app**

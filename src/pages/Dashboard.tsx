@@ -17,7 +17,8 @@ import {
   weakTopics,
 } from "../state/selectors";
 import { modules } from "../content";
-import { EmptyState, ProgressBar } from "../components/ui";
+import { EmptyState, HandNote, PageHead, ProgressBar } from "../components/ui";
+import { RangeLab } from "../components/RangeLab";
 import { goalLabels } from "../content";
 import type { Goal } from "../types/content";
 
@@ -38,25 +39,28 @@ export function Dashboard() {
 
   return (
     <div className="fade-in">
-      <div className="page-head">
-        <h1>{isNew ? "Welcome to QA Lab" : "Your learning workspace"}</h1>
-        <p className="lede">
-          {state.preferences.goal
+      <PageHead
+        eyebrow="Your workbook"
+        title={isNew ? "Welcome to QABrew" : "Your learning workspace"}
+        lede={
+          state.preferences.goal
             ? `Goal: ${goalLabels[state.preferences.goal as Goal]} - suggestions below follow it, everything stays open.`
-            : "Pick a goal in Settings to personalise suggestions."}
-        </p>
-      </div>
+            : "Pick a goal in Settings to personalise suggestions."
+        }
+      />
 
-      {/* Primary action */}
-      <div className="card" style={{ marginBottom: 14 }}>
-        <div className="row between" style={{ marginBottom: 8 }}>
-          <h2 style={{ margin: 0 }}>Continue learning</h2>
-          <span className="chip chip-accent">{state.activity.length === 0 ? "Start here" : "Pick up where you left off"}</span>
+      {/* Primary action - the one dominant card */}
+      <div className="hero-card">
+        <div className="row between" style={{ marginBottom: 6 }}>
+          <span className="eyebrow" style={{ marginBottom: 0 }}>{isNew ? "Start here" : "Continue learning"}</span>
+          {next && <span className="chip">Module {next.module.letter} - {next.module.title}</span>}
         </div>
         {next ? (
           <>
-            <p style={{ margin: "0 0 10px" }}>
-              Module {next.module.letter}: {next.module.title} - lesson <strong>{next.lesson.title}</strong> ({next.lesson.minutes} min)
+            <div className="hero-title">{next.lesson.title}</div>
+            <p className="muted" style={{ margin: "0 0 12px" }}>
+              Lesson {next.module.lessons.findIndex((l) => l.id === next.lesson.id) + 1} of{" "}
+              {next.module.lessons.length} - {next.lesson.minutes} min read
             </p>
             <div className="row between">
               <div style={{ minWidth: 160, flex: 1, marginRight: 12 }}>
@@ -77,7 +81,7 @@ export function Dashboard() {
         )}
       </div>
 
-      <div className="grid2" style={{ marginBottom: 14 }}>
+      <div className="grid2" style={{ marginBottom: 16 }}>
         {/* Review */}
         <div className="card">
           <h2>Cards due for review</h2>
@@ -125,28 +129,44 @@ export function Dashboard() {
             </EmptyState>
           )}
         </div>
+      </div>
 
-        {/* Activity */}
-        <div className="card">
-          <h2>Activity</h2>
-          <div className="stat-row">
-            <div className="stat">
-              <div className="stat-num">{streak}</div>
-              <div className="stat-label">day streak</div>
-            </div>
-            <div className="stat">
-              <div className="stat-num">{weekActive}/7</div>
-              <div className="stat-label">active days this week</div>
-            </div>
-            <div className="stat">
-              <div className="stat-num">{state.lessons ? Object.keys(state.lessons).length : 0}</div>
-              <div className="stat-label">lessons completed</div>
-            </div>
-          </div>
-          <p className="small muted" style={{ margin: "10px 0 0" }}>
-            Streaks are a nudge, not a grade. Learning beats streak-protecting.
-          </p>
+      {/* The distinctive teaching interaction: boundary playground */}
+      <div className="card">
+        <div className="row between">
+          <h2 style={{ marginBottom: 2 }}>Boundary playground</h2>
+          <span className="chip">teaching example</span>
         </div>
+        <p className="muted small" style={{ margin: "2px 0 8px" }}>
+          A numeric field that accepts 18 to 65 inclusive. Probe the values around each boundary and see
+          exactly where the field flips from valid to invalid.
+        </p>
+        <RangeLab />
+        <HandNote>
+          the interesting bugs live at the edges - test 17, 18, 19 and 64, 65, 66, not just the middle
+        </HandNote>
+      </div>
+
+      {/* Activity */}
+      <div className="card">
+        <h2>Activity</h2>
+        <div className="stat-row">
+          <div className="stat">
+            <div className="stat-num">{streak}</div>
+            <div className="stat-label">day streak</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">{weekActive}/7</div>
+            <div className="stat-label">active days this week</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">{state.lessons ? Object.keys(state.lessons).length : 0}</div>
+            <div className="stat-label">lessons completed</div>
+          </div>
+        </div>
+        <p className="small muted" style={{ margin: "10px 0 0" }}>
+          Streaks are a nudge, not a grade. Learning beats streak-protecting.
+        </p>
       </div>
 
       {/* Quiz results */}

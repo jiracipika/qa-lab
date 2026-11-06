@@ -15,7 +15,7 @@ export function SettingsPage() {
 
   const doExport = () => {
     const text = exportToString(state);
-    downloadJSON(`qa-lab-progress-${new Date().toISOString().slice(0, 10)}.json`, text);
+    downloadJSON(`qabrew-progress-${new Date().toISOString().slice(0, 10)}.json`, text);
     setStatus("Export downloaded. Keep it somewhere safe - it contains all your progress.");
   };
 
@@ -29,8 +29,12 @@ export function SettingsPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Preferences and data</div>
         <h1>Settings</h1>
-        <p className="lede">Preferences, goal, and your data: export, import, reset.</p>
+        <p className="lede">
+          Preferences, goal, and your data: export, import, reset. Progress lives in this browser only - it does not
+          sync between devices or browser profiles. Export is the way to move it.
+        </p>
       </div>
 
       {saveError && (
@@ -71,8 +75,8 @@ export function SettingsPage() {
               value={state.preferences.theme}
               onChange={(e) => dispatch({ type: "setPrefs", prefs: { theme: e.target.value as "light" | "dark" } })}
             >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
+              <option value="light">Light (paper)</option>
+              <option value="dark">Dark (midnight ink)</option>
             </select>
           </div>
           <div className="field">
@@ -108,7 +112,7 @@ export function SettingsPage() {
             type="file"
             accept="application/json"
             className="visually-hidden"
-            aria-label="Choose a QA Lab export file"
+            aria-label="Choose a QABrew export file"
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) onFile(f);
@@ -123,7 +127,7 @@ export function SettingsPage() {
             {importPreview.ok ? (
               <>
                 <p style={{ margin: "0 0 8px" }}>
-                  Valid QA Lab export. Importing <strong>replaces all current progress</strong>
+                  Valid QABrew export. Importing <strong>replaces all current progress</strong>
                   {` (${Object.keys(state.lessons).length} lessons, ${Object.keys(state.cards).length} cards in schedule, ${state.sandboxReports.length} reports)`}.
                 </p>
                 <div className="row">
@@ -157,25 +161,25 @@ export function SettingsPage() {
         )}
 
         {status && <p className="chip chip-ok">{status}</p>}
+      </div>
 
-        <div style={{ marginTop: 18, borderTop: "1px solid var(--border)", paddingTop: 14 }}>
-          <h3>Reset</h3>
-          <p className="small muted">Deletes all progress, answers, notes, reports, and schedule data in this browser. Preferences are kept.</p>
-          <ConfirmButton
-            onConfirm={() => {
-              dispatch({ type: "reset" });
-              setStatus("Progress reset. Fresh start.");
-            }}
-          >
-            Reset all progress
-          </ConfirmButton>
-        </div>
+      <div className="card danger-zone">
+        <h2>Reset</h2>
+        <p className="small muted">Deletes all progress, answers, notes, reports, and schedule data in this browser. Preferences are kept. This is the only action here that destroys data - export first if you might want it back.</p>
+        <ConfirmButton
+          onConfirm={() => {
+            dispatch({ type: "reset" });
+            setStatus("Progress reset. Fresh start.");
+          }}
+        >
+          Reset all progress
+        </ConfirmButton>
       </div>
 
       <div className="card">
-        <h2>About QA Lab</h2>
+        <h2>About QABrew</h2>
         <p className="small muted" style={{ margin: 0 }}>
-          Personal QA learning workspace. Runs fully client-side; no accounts, no tracking, no secrets. Terminology
+          Personal QA learning workbook. Runs fully client-side; no accounts, no tracking, no secrets. Terminology
           aligned with the ISTQB CTFL v4.0 syllabus (v4.0.1, checked against istqb.org 2026-11-05); all questions are
           original practice material. Export format version: 1.
         </p>

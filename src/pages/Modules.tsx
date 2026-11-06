@@ -4,28 +4,32 @@ import { Link, useParams } from "react-router-dom";
 import { CONTENT_NOTE, moduleById, modules } from "../content";
 import { useStore } from "../state/store";
 import { moduleLessonProgress, moduleQuizBest } from "../state/selectors";
-import { EmptyState, ProgressBar } from "../components/ui";
+import { EmptyState, PageHead, ProgressBar } from "../components/ui";
 
 export function ModulesList() {
   const { state } = useStore();
+  const firstOpen = modules.find((m) => moduleLessonProgress(state, m.id).done < moduleLessonProgress(state, m.id).total)?.id;
   return (
     <div className="fade-in">
-      <div className="page-head">
-        <h1>Learning modules</h1>
-        <p className="lede">
-          Three complete starter modules with lessons, flashcards, quizzes, challenges, and interactive visuals.
-          Internal course numbering - not official certification chapters.
-        </p>
-      </div>
+      <PageHead
+        eyebrow="Chapters"
+        title="Learning modules"
+        lede={
+          <>
+            Three complete starter modules with lessons, flashcards, quizzes, challenges, and interactive visuals.
+            Internal course numbering - not official certification chapters.
+          </>
+        }
+      />
       {modules.map((m) => {
         const p = moduleLessonProgress(state, m.id);
         const best = moduleQuizBest(state, m.id);
         return (
-          <div className="card" key={m.id} style={{ marginBottom: 14 }}>
+          <div className={`card${m.id === firstOpen ? " sketch" : ""}`} key={m.id} style={{ marginBottom: 14 }}>
             <div className="row between" style={{ alignItems: "flex-start" }}>
               <div>
                 <h2 style={{ marginBottom: 4 }}>
-                  Module {m.letter}: {m.title}
+                  <span aria-hidden style={{ color: "var(--accent)", marginRight: 2 }}>{m.letter}.</span> {m.title}
                 </h2>
                 <p className="muted" style={{ margin: 0 }}>{m.subtitle}</p>
               </div>
@@ -73,8 +77,9 @@ export function ModulePage() {
         <Link to="/modules">Modules</Link> / Module {mod.letter}
       </div>
       <div className="page-head">
+        <div className="eyebrow">Module {mod.letter} of {modules[modules.length - 1].letter}</div>
         <h1>
-          Module {mod.letter}: {mod.title}
+          {mod.title}
         </h1>
         <p className="lede">{mod.subtitle}</p>
       </div>

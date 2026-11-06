@@ -21,6 +21,7 @@ export function QuizzesHub() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Check your understanding</div>
         <h1>Quizzes</h1>
         <p className="lede">
           Original practice questions written for this course - practice mode for learning, assessment mode for
@@ -66,6 +67,7 @@ export function QuizPage() {
         <Link to="/quizzes">Quizzes</Link> / Module {mod.letter}
       </div>
       <div className="page-head">
+        <div className="eyebrow">Quiz - module {mod.letter}</div>
         <h1>Module {mod.letter} quiz: {mod.title}</h1>
       </div>
       {mode === null ? (
@@ -227,7 +229,7 @@ function QuizRunner({ questions, moduleId, mode, timerMinutes, dispatch, onExit 
           return (
             <div className="card" key={question.id} style={{ marginBottom: 12 }}>
               <h3>
-                {ok ? "✓" : chosen.length === 0 ? "–" : "✗"} Q{i + 1}. {question.stem}
+                {ok ? "✓" : chosen.length === 0 ? "-" : "✗"} Q{i + 1}. {question.stem}
               </h3>
               <QuestionBody question={question} chosen={chosen} optionOrder={optionOrder[question.id]} revealed />
               <div className="explain-box">

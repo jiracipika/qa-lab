@@ -21,6 +21,7 @@ export function GlossaryPage() {
   return (
     <div className="fade-in">
       <div className="page-head">
+        <div className="eyebrow">Reference</div>
         <h1>Glossary</h1>
         <p className="lede">Plain-language definitions linked from lessons, plus side-by-side comparisons of the pairs everyone mixes up.</p>
       </div>
