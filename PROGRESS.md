@@ -3,6 +3,27 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.2 - 2026-11-06)
+
+- Route-level code splitting: every page except the dashboard loads as its own chunk
+  (~12 on-demand chunks; entry 170.7 -> 137.7 kB gzip before Module D, 158.7 kB after -
+  D's content rides in the shared content chunk imported by the dashboard/selectors).
+  Suspense fallback: spinner + "Loading..." with role=status.
+- **Module D - Defect management and QA documentation** (Jira/Xray/Confluence flavour,
+  first planned roadmap item now built): 6 lessons (defect lifecycle, defect reports,
+  severity/priority/triage, traceability with Xray, honest metrics, collaboration),
+  12 flashcards (3 per kind incl. code-api Xray/Jira JSON), 20 original quiz questions
+  (4 multi, every distractor annotated), 3 challenges (defect-report on a double-fee
+  banking scenario, regression scope selection, defect-workflow state-machine testing),
+  full contract compliance via the same content validation.
+- Glossary +4 terms: defect lifecycle, triage, defect escape rate, defect density.
+- Roadmap: "Defect management" item removed (now built), replaced with honestly-labelled
+  planned "Accessibility testing" (WCAG 2.2/axe) to keep the 10-item honest list.
+- Goal ordering updated: D slotted into fundamentals/manual/istqb/automation/interview.
+- e2e made lazy-route aware: first assertion on each lazy page uses findBy* (a dashboard
+  hero string collision with /Lesson 1 of 6/ had masked navigation failures).
+- Mimosa deep scan after the change: 0 findings, 0 advisories (seal sha256:557888a8...).
+
 ## Completed (release 1.1 "QABrew" - 2026-11-06)
 
 - Rebrand: QA Lab -> QABrew ("the QA workbook") across UI, title/meta, favicon
@@ -62,6 +83,14 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 - Settings: goal, theme, motion, export download, import with validation + overwrite
   confirmation, reset with confirmation, storage-error banner.
 
+## Verification (2026-11-06, release 1.2)
+
+- `npx tsc -b` clean; `npx vite build` succeeds; entry 158.7 kB gzip + ~12 route chunks.
+- `npx vitest run`: 62/62 across 7 files - content contract now validates 4 modules
+  (each: >=5 lessons, >=10 cards all 4 kinds, exactly 20 questions 2-6 multi, >=2
+  challenges, >=1 diagram ref); Module D passes all of it.
+- Non-ASCII scan clean on all new/edited files.
+
 ## Verification (2026-11-06, release 1.1)
 
 - `npx tsc -b` clean; `npx vite build` succeeds (~171 kB gzip JS; fonts load per-subset).
@@ -94,18 +123,19 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 - Progress is per-browser (localStorage); export/import is the migration path.
 - Open-ended challenge answers are self-assessed (by design - no keyword-matching theatre).
 - Review schedule is day-granular; no intra-day due times.
-- Single JS bundle (~165 kB gzip); no route-level code splitting yet.
-- No real-browser visual/screenshot regression suite.
+- Module content rides in the shared entry chunk (routes are split; content is not yet).
+- No real-browser visual/screenshot regression suite (Playwright queued, local-only until
+  a workflow-scoped token exists).
 - Sandbox state (payees/transfers) resets with the in-app reset; only reports persist.
-- Bundle warning: 520 kB raw (see code-splitting TODO below).
 
 ## Next concrete task (pick one)
 
-1. Route-level code splitting (React.lazy for Games/Sandbox/Tools) to halve initial JS.
-2. Module D "Defect management and QA documentation" (Jira/Xray/Confluence flavour) - first
-   roadmap item, extends sandbox reports into a workflow view.
-3. Real-browser smoke test (Playwright) with desktop + mobile viewports and console-error
-   assertion, wired into CI.
+1. Real-browser smoke test (Playwright) with desktop + mobile viewports and console-error
+   assertion - run locally (note: the GitHub token cannot push `.github/workflows/*`, so CI
+   wiring waits until a scoped token is available).
+2. Module E "API testing" (REST fundamentals, status codes, JSON schema, auth, negative
+   testing) - next planned roadmap item; pairs with the API-request-flow diagram.
+3. Lazy-load module content per module (content currently rides in the shared entry chunk).
 
 ## Deployment
 

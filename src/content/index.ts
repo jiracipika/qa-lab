@@ -1,15 +1,18 @@
-/** Content registry: assembles the three starter modules and exposes lookups. Content is data; UI imports from here only. */
+/** Content registry: assembles the curriculum modules and exposes lookups. Content is data; UI imports from here only. */
 
 import type { Goal, LearningModule } from "../types/content";
 import { lessonsA } from "./moduleA";
 import { lessonsB } from "./moduleB";
 import { lessonsC } from "./moduleC";
+import { lessonsD } from "./moduleD";
 import { cardsA, challengesA } from "./studyA";
 import { cardsB, challengesB } from "./studyB";
 import { cardsC, challengesC } from "./studyC";
+import { cardsD, challengesD } from "./studyD";
 import { quizA } from "./quizA";
 import { quizB } from "./quizB";
 import { quizC } from "./quizC";
+import { quizD } from "./quizD";
 
 export const CONTENT_NOTE =
   "Internal course material. Terminology aligned with the ISTQB Certified Tester Foundation Level (CTFL) v4.0 syllabus (v4.0.1); checked against istqb.org on 2026-11-05. All quiz questions and exercises are original practice material - not official certification exam questions - and this project claims no accreditation.";
@@ -99,6 +102,34 @@ export const modules: LearningModule[] = [
     ],
     minutes: 44,
   },
+  {
+    id: "mod-d",
+    letter: "D",
+    title: "Defect management and QA documentation",
+    subtitle: "The defect lifecycle, reports that get fixed, severity and triage, traceability with Jira and Xray, and metrics you can defend in an audit.",
+    level: "intermediate",
+    topics: ["Defect lifecycle", "Defect reporting", "Severity and priority", "Triage", "Traceability", "Xray", "Metrics", "Collaboration"],
+    objectives: [
+      "Drive a defect through the lifecycle correctly, from discovery to verified closure",
+      "Write defect reports that developers can reproduce and act on first try",
+      "Assign severity with rationale and keep it independent of priority",
+      "Maintain requirement-to-test-to-run-to-defect traceability in Jira and Xray",
+      "Report defect metrics honestly and recognise when numbers are being gamed",
+    ],
+    prereqIds: ["mod-a"],
+    lessons: lessonsD,
+    cards: cardsD,
+    quiz: quizD,
+    challenges: challengesD,
+    recap: [
+      "Status and resolution are different fields; Closed does not always mean Fixed.",
+      "A report hands the fixer everything without a conversation: pattern title, minimal steps, cited expected, factual actual.",
+      "Severity is impact; priority is scheduling - independent axes, argued with evidence at triage.",
+      "The chain requirement -> test -> run -> defect is what audits and impact analysis read.",
+      "DDP and escape rate are lagging indicators - report the split, watch for gaming, never score people.",
+    ],
+    minutes: 44,
+  },
 ];
 
 export const moduleById = (id: string): LearningModule | undefined => modules.find((m) => m.id === id);
@@ -121,9 +152,9 @@ export const goalLabels: Record<Goal, string> = {
 
 /** Ordered module suggestions per goal; access to everything stays open. */
 export const goalModuleOrder: Record<Goal, string[]> = {
-  fundamentals: ["mod-a", "mod-b", "mod-c"],
-  manual: ["mod-c", "mod-a", "mod-b"],
-  istqb: ["mod-a", "mod-b", "mod-c"],
-  automation: ["mod-c", "mod-b", "mod-a"],
-  interview: ["mod-a", "mod-c", "mod-b"],
+  fundamentals: ["mod-a", "mod-b", "mod-c", "mod-d"],
+  manual: ["mod-c", "mod-d", "mod-a", "mod-b"],
+  istqb: ["mod-a", "mod-b", "mod-d", "mod-c"],
+  automation: ["mod-c", "mod-b", "mod-d", "mod-a"],
+  interview: ["mod-a", "mod-d", "mod-c", "mod-b"],
 };

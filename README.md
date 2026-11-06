@@ -20,18 +20,19 @@ npm run dev        # http://localhost:5173
 Other commands:
 
 ```bash
-npm test           # run the 62 automated checks (unit + content + games + e2e)
+npm test           # run the 62 automated checks (unit + content + games + e2e, 4 modules)
 npm run build      # typecheck + production build into dist/
 npm run preview    # serve the production build locally
 ```
 
 ## What is inside
 
-- **Three complete starter modules** (18 lessons, 36 concept flashcards, 60 original quiz
-  questions, 10 practical challenges, 9 interactive diagrams):
+- **Four complete modules** (24 lessons, 48 concept flashcards, 80 original quiz
+  questions, 13 practical challenges, 9 interactive diagrams):
   - Module A - Testing fundamentals
   - Module B - Testing through development and delivery
   - Module C - Practical test design
+  - Module D - Defect management and QA documentation (Jira/Xray/Confluence flavour)
 - **Boundary playground**: a live teaching widget - probe a numeric field that accepts
   18-65 and watch exactly where it flips from valid to invalid (same engine as the
   Boundary Hunter game).

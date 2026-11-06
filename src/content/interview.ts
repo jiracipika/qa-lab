@@ -207,11 +207,11 @@ export const interviewCards: InterviewCard[] = [
 /** Roadmap of modules that are planned but NOT yet implemented. Honest availability labels. */
 export const roadmap: RoadmapItem[] = [
   {
-    id: "rm-defects",
-    title: "Defect management and QA documentation",
-    blurb: "Defect lifecycle depth, severity/priority matrices, Jira workflow design, Confluence test documentation, Xray test management, audit-ready evidence.",
-    tracks: ["Manual testing", "ISTQB-style prep"],
-    tools: ["Jira", "Confluence", "Xray"],
+    id: "rm-a11y",
+    title: "Accessibility testing",
+    blurb: "WCAG 2.2 essentials, keyboard paths and focus management, screen-reader passes, and automated accessibility checks wired into pipelines.",
+    tracks: ["Manual testing", "Automation"],
+    tools: ["Playwright", "axe"],
   },
   {
     id: "rm-api",

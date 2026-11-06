@@ -38,14 +38,14 @@ describe("learner journey", () => {
 
     // 2. Open a module and complete a lesson
     await user.click(screen.getByRole("link", { name: /Open lesson/ }));
-    expect(screen.getByText(/Lesson 1 of 6/)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /Mark lesson complete/ }));
-    expect(screen.getByText(/Lesson completed/)).toBeInTheDocument();
+    // The lesson route is lazy - wait for a control that only exists on the lesson page
+    await user.click(await screen.findByRole("button", { name: /Mark lesson complete/ }));
+    expect(await screen.findByText(/Lesson completed/)).toBeInTheDocument();
 
     // 3. Answer a quiz question in practice mode and read the explanation
     await user.click(screen.getByRole("link", { name: "Quizzes" }));
-    await user.click(screen.getAllByRole("link", { name: /^Start$/ })[0]);
-    await user.click(screen.getByRole("button", { name: /Practice/ }));
+    await user.click((await screen.findAllByRole("link", { name: /^Start$/ }))[0]);
+    await user.click(await screen.findByRole("button", { name: /Practice/ }));
     const options = document.querySelectorAll("button.quiz-option");
     expect(options.length).toBeGreaterThanOrEqual(3);
     await user.click(options[1]);
@@ -56,7 +56,7 @@ describe("learner journey", () => {
 
     // 4. Review a concept card: flip, then rate recall
     await user.click(screen.getAllByRole("link", { name: /Review/ })[0]);
-    const flip = screen.getByRole("button", { name: /Reveal answer/i });
+    const flip = await screen.findByRole("button", { name: /Reveal answer/i });
     await user.click(flip);
     const good = screen.getByRole("button", { name: /Good/ });
     await user.click(good);
@@ -64,7 +64,7 @@ describe("learner journey", () => {
 
     // 5. Play a minigame round (Boundary Hunter, round 1 = 3-point BVA)
     await user.click(screen.getByRole("link", { name: "Minigames" }));
-    await user.click(screen.getAllByRole("link", { name: "Play" })[0]);
+    await user.click((await screen.findAllByRole("link", { name: "Play" }))[0]);
     // Select the complete 3-point set for 1.00-10,000.00: 1.00, 1.01, 5000.50, 9999.99, 10000.00
     for (const v of ["1.00", "1.01", "5000.50", "9999.99", "10000.00"]) {
       await user.click(screen.getByRole("button", { name: new RegExp(`^${v.replace(".", "\\.")}$`) }));
@@ -75,7 +75,7 @@ describe("learner journey", () => {
 
     // 6. Sandbox: log in, make a transfer, observe the planted confirmation defect, file a report
     await user.click(screen.getByRole("link", { name: "Bug sandbox" }));
-    await user.type(screen.getByLabelText("Password"), "Sandbox123!");
+    await user.type(await screen.findByLabelText("Password"), "Sandbox123!");
     await user.click(screen.getByRole("button", { name: /Sign in/ }));
     await user.click(screen.getByRole("tab", { name: "Transfer" }));
     await user.click(screen.getByRole("button", { name: /Submit transfer/ }));
