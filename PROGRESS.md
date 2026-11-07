@@ -3,6 +3,24 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.3 - 2026-11-07)
+
+- **Module E - API testing** (Postman/Bruno/REST Assured flavour, second planned roadmap
+  item now built): 6 lessons (HTTP + status codes + idempotency, Postman/Bruno workbench,
+  JSON paths + schemas, authentication matrix incl. the IDOR boundary, positive/negative/
+  boundary API test design, collections -> REST Assured + CI), 12 flashcards (3 per kind,
+  code-api cards carry real REST Assured / pm.test / JSON Schema snippets), 20 original
+  quiz questions (5 multi, every distractor annotated), 3 challenges (api-response
+  diagnosis of a lying 200-with-ERROR body, data-driven payee-endpoint test cases, the
+  amount field's boundary set with the number-vs-string trap). 3 interactive diagrams
+  reused (api-request-flow, boundary-values, ci-pipeline).
+- Glossary +4 terms: REST, idempotency, JSON Schema, contract testing.
+- Roadmap: "API testing" removed (now built), replaced with honestly-labelled planned
+  "Performance testing" (k6/JMeter, percentiles). Goal ordering includes E (first for the
+  automation goal).
+- Curriculum now: 5 modules, 30 lessons, 60 flashcards, 100 quiz questions, 16 challenges,
+  4 modules' worth of exercises reference the sandbox bank's transfer/payees domain.
+
 ## Completed (release 1.2 - 2026-11-06)
 
 - Route-level code splitting: every page except the dashboard loads as its own chunk
@@ -83,6 +101,15 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 - Settings: goal, theme, motion, export download, import with validation + overwrite
   confirmation, reset with confirmation, storage-error banner.
 
+## Verification (2026-11-07, release 1.3)
+
+- `npx tsc -b` clean; `npx vite build` succeeds; entry 178.7 kB gzip (content rides in the
+  shared chunk; per-module content lazy-loading is the queued fix).
+- `npx vitest run`: 62/62 across 7 files - content contract validates 5 modules
+  (each: >=5 lessons with >=1 interactive visual, >=10 cards all 4 kinds, exactly 20
+  questions with 2-6 multi and unique stems, >=2 challenges); Module E passes all of it.
+- Non-ASCII scan clean on the three new content files.
+
 ## Verification (2026-11-06, release 1.2)
 
 - `npx tsc -b` clean; `npx vite build` succeeds; entry 158.7 kB gzip + ~12 route chunks.
@@ -130,12 +157,13 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 
 ## Next concrete task (pick one)
 
-1. Real-browser smoke test (Playwright) with desktop + mobile viewports and console-error
-   assertion - run locally (note: the GitHub token cannot push `.github/workflows/*`, so CI
-   wiring waits until a scoped token is available).
-2. Module E "API testing" (REST fundamentals, status codes, JSON schema, auth, negative
-   testing) - next planned roadmap item; pairs with the API-request-flow diagram.
-3. Lazy-load module content per module (content currently rides in the shared entry chunk).
+1. Per-module content lazy-loading (content currently rides in the shared entry chunk;
+   each module adds ~20 kB gzip to it).
+2. Real-browser smoke test (Playwright) with desktop + mobile viewports and console-error
+   assertion - run locally (the GitHub token cannot push `.github/workflows/*`, so CI
+   wiring waits for a scoped token).
+3. Module F from the roadmap: "SQL and database testing" (SELECT to window functions,
+   joins for reconciliation, data integrity, migration verification).
 
 ## Deployment
 

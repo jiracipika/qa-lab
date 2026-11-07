@@ -5,14 +5,17 @@ import { lessonsA } from "./moduleA";
 import { lessonsB } from "./moduleB";
 import { lessonsC } from "./moduleC";
 import { lessonsD } from "./moduleD";
+import { lessonsE } from "./moduleE";
 import { cardsA, challengesA } from "./studyA";
 import { cardsB, challengesB } from "./studyB";
 import { cardsC, challengesC } from "./studyC";
 import { cardsD, challengesD } from "./studyD";
+import { cardsE, challengesE } from "./studyE";
 import { quizA } from "./quizA";
 import { quizB } from "./quizB";
 import { quizC } from "./quizC";
 import { quizD } from "./quizD";
+import { quizE } from "./quizE";
 
 export const CONTENT_NOTE =
   "Internal course material. Terminology aligned with the ISTQB Certified Tester Foundation Level (CTFL) v4.0 syllabus (v4.0.1); checked against istqb.org on 2026-11-05. All quiz questions and exercises are original practice material - not official certification exam questions - and this project claims no accreditation.";
@@ -130,6 +133,34 @@ export const modules: LearningModule[] = [
     ],
     minutes: 44,
   },
+  {
+    id: "mod-e",
+    letter: "E",
+    title: "API testing",
+    subtitle: "HTTP and status codes, Postman and Bruno, JSON validation, authentication, boundary-driven API test design, and REST Assured automation.",
+    level: "intermediate",
+    topics: ["HTTP basics", "Status codes", "Postman", "Bruno", "Response validation", "Authentication", "API test design", "REST Assured"],
+    objectives: [
+      "Read HTTP requests and responses and classify status codes against the contract",
+      "Test REST APIs with Postman or Bruno: collections, environments, and assertions",
+      "Validate response bodies with paths, types, and JSON Schema",
+      "Test the authentication matrix, including the IDOR boundary, without leaking secrets",
+      "Design positive/negative/boundary API cases and automate them in REST Assured",
+    ],
+    prereqIds: ["mod-a"],
+    lessons: lessonsE,
+    cards: cardsE,
+    quiz: quizE,
+    challenges: challengesE,
+    recap: [
+      "2xx succeeded, 4xx the caller erred (often correctly), 5xx the server broke - report 5xx.",
+      "Assert bodies, not just statuses: types matter (number, not string), and schemas catch shape drift.",
+      "401 is identity, 403 is permission; the IDOR check is mandatory in banking.",
+      "Every rule in the API doc is a test condition - boundaries included, error codes asserted.",
+      "Stability is data hygiene: unique ids per run, no order dependence, honest timeouts.",
+    ],
+    minutes: 45,
+  },
 ];
 
 export const moduleById = (id: string): LearningModule | undefined => modules.find((m) => m.id === id);
@@ -152,9 +183,9 @@ export const goalLabels: Record<Goal, string> = {
 
 /** Ordered module suggestions per goal; access to everything stays open. */
 export const goalModuleOrder: Record<Goal, string[]> = {
-  fundamentals: ["mod-a", "mod-b", "mod-c", "mod-d"],
-  manual: ["mod-c", "mod-d", "mod-a", "mod-b"],
-  istqb: ["mod-a", "mod-b", "mod-d", "mod-c"],
-  automation: ["mod-c", "mod-b", "mod-d", "mod-a"],
-  interview: ["mod-a", "mod-d", "mod-c", "mod-b"],
+  fundamentals: ["mod-a", "mod-b", "mod-c", "mod-d", "mod-e"],
+  manual: ["mod-c", "mod-d", "mod-e", "mod-a", "mod-b"],
+  istqb: ["mod-a", "mod-b", "mod-d", "mod-c", "mod-e"],
+  automation: ["mod-e", "mod-c", "mod-b", "mod-d", "mod-a"],
+  interview: ["mod-a", "mod-d", "mod-c", "mod-e", "mod-b"],
 };

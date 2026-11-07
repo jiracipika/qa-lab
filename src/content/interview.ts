@@ -214,11 +214,11 @@ export const roadmap: RoadmapItem[] = [
     tools: ["Playwright", "axe"],
   },
   {
-    id: "rm-api",
-    title: "API testing",
-    blurb: "REST fundamentals, status codes and contracts, JSON schema validation, auth, negative API testing, mocking, contract testing between services.",
-    tracks: ["Automation", "Manual testing"],
-    tools: ["Postman", "Bruno", "REST Assured"],
+    id: "rm-perf",
+    title: "Performance testing",
+    blurb: "Load, stress, and soak patterns, k6 and JMeter scripting, reading percentiles instead of averages, and finding the breaking point before customers do.",
+    tracks: ["Automation", "Banking QA"],
+    tools: ["k6", "JMeter"],
   },
   {
     id: "rm-sql",

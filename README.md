@@ -27,12 +27,13 @@ npm run preview    # serve the production build locally
 
 ## What is inside
 
-- **Four complete modules** (24 lessons, 48 concept flashcards, 80 original quiz
-  questions, 13 practical challenges, 9 interactive diagrams):
+- **Five complete modules** (30 lessons, 60 concept flashcards, 100 original quiz
+  questions, 16 practical challenges, 9 interactive diagrams):
   - Module A - Testing fundamentals
   - Module B - Testing through development and delivery
   - Module C - Practical test design
   - Module D - Defect management and QA documentation (Jira/Xray/Confluence flavour)
+  - Module E - API testing (Postman, Bruno, REST Assured)
 - **Boundary playground**: a live teaching widget - probe a numeric field that accepts
   18-65 and watch exactly where it flips from valid to invalid (same engine as the
   Boundary Hunter game).
