@@ -4,6 +4,7 @@ import type { ComponentType } from "react";
 import { ErrorDefectFailureDiagram, TestProcessDiagram, DefectWorkflowDiagram, TestLevelsDiagram } from "./Diagrams1";
 import { BoundaryValuesDiagram, DecisionTableDiagram, StateTransitionsDiagram } from "./Diagrams2";
 import { ApiFlowDiagram, CiPipelineDiagram } from "./Diagrams3";
+import { SchemaDiagram } from "./Diagrams4";
 
 export interface DiagramEntry {
   id: string;
@@ -21,6 +22,7 @@ export const diagrams: DiagramEntry[] = [
   { id: "state-transitions", title: "Interactive: state transition machine", component: StateTransitionsDiagram },
   { id: "api-request-flow", title: "Interactive: API request and response flow", component: ApiFlowDiagram },
   { id: "ci-pipeline", title: "Interactive: CI/CD pipeline quality gates", component: CiPipelineDiagram },
+  { id: "db-schema", title: "Interactive: a mini banking schema and its constraints", component: SchemaDiagram },
 ];
 
 export function getDiagram(id: string): DiagramEntry | undefined {

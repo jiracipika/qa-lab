@@ -1,12 +1,12 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import { Dashboard } from "./pages/Dashboard";
 import { EmptyState } from "./components/ui";
 import { Link } from "react-router-dom";
 
-// Route-level code splitting: only the dashboard ships in the entry bundle; every
-// other page (and its content/engine dependencies) loads on first visit.
+// Route-level code splitting: every page - including the dashboard - loads as its
+// own chunk, so the entry bundle carries only the shell (layout, theme, onboarding).
+const Dashboard = lazy(() => import("./pages/Dashboard").then((m) => ({ default: m.Dashboard })));
 const ModulesList = lazy(() => import("./pages/Modules").then((m) => ({ default: m.ModulesList })));
 const ModulePage = lazy(() => import("./pages/Modules").then((m) => ({ default: m.ModulePage })));
 const LessonPage = lazy(() => import("./pages/Lesson").then((m) => ({ default: m.LessonPage })));

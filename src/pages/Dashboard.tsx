@@ -57,7 +57,7 @@ export function Dashboard() {
         </div>
         {next ? (
           <>
-            <div className="hero-title">{next.lesson.title}</div>
+            <h2 className="hero-title">{next.lesson.title}</h2>
             <p className="muted" style={{ margin: "0 0 12px" }}>
               Lesson {next.module.lessons.findIndex((l) => l.id === next.lesson.id) + 1} of{" "}
               {next.module.lessons.length} - {next.lesson.minutes} min read

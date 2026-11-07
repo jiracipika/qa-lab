@@ -18,11 +18,30 @@ import {
   X,
 } from "lucide-react";
 import { useStore } from "../state/store";
-import { dueConceptCards } from "../state/selectors";
-import { goalLabels } from "../content";
+import { goalLabels } from "../content/goals";
 import type { Goal } from "../types/content";
+import type { AppState } from "../types/state";
 import { dayKey } from "../lib/dates";
 import { BrandMark } from "./ui";
+
+/**
+ * Due-card count for the sidebar chip, computed without pulling the content layer
+ * into the eager entry bundle: the selector (and the module content it reads) is
+ * loaded on demand from the shared lazy chunk.
+ */
+function useDueCount(state: AppState) {
+  const [due, setDue] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    import("../state/selectors").then(({ dueConceptCards }) => {
+      if (alive) setDue(dueConceptCards(state).length);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [state]);
+  return due;
+}
 
 const NEW_HOME = "https://qabrew.vercel.app";
 const OLD_HOST = "qa-lab-jiracipika.vercel.app";
@@ -101,7 +120,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { state } = useStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
-  const due = dueConceptCards(state).length;
+  const due = useDueCount(state);
   const unresolved = state.mistakes.filter((m) => !m.resolved).length;
 
   useEffect(() => {

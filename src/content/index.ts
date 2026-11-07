@@ -6,16 +6,19 @@ import { lessonsB } from "./moduleB";
 import { lessonsC } from "./moduleC";
 import { lessonsD } from "./moduleD";
 import { lessonsE } from "./moduleE";
+import { lessonsF } from "./moduleF";
 import { cardsA, challengesA } from "./studyA";
 import { cardsB, challengesB } from "./studyB";
 import { cardsC, challengesC } from "./studyC";
 import { cardsD, challengesD } from "./studyD";
 import { cardsE, challengesE } from "./studyE";
+import { cardsF, challengesF } from "./studyF";
 import { quizA } from "./quizA";
 import { quizB } from "./quizB";
 import { quizC } from "./quizC";
 import { quizD } from "./quizD";
 import { quizE } from "./quizE";
+import { quizF } from "./quizF";
 
 export const CONTENT_NOTE =
   "Internal course material. Terminology aligned with the ISTQB Certified Tester Foundation Level (CTFL) v4.0 syllabus (v4.0.1); checked against istqb.org on 2026-11-05. All quiz questions and exercises are original practice material - not official certification exam questions - and this project claims no accreditation.";
@@ -161,6 +164,34 @@ export const modules: LearningModule[] = [
     ],
     minutes: 45,
   },
+  {
+    id: "mod-f",
+    letter: "F",
+    title: "SQL and database testing",
+    subtitle: "Reading schemas, joins and window functions as evidence, constraints as requirements, migration verification, test data design, and end-to-end verification from the rows up.",
+    level: "intermediate",
+    topics: ["SQL basics", "Joins", "Data integrity", "Migrations", "Test data", "Verification"],
+    objectives: [
+      "Read a schema and follow data across tables with joins",
+      "Use aggregates and window functions to find duplicates, gaps, and absences",
+      "Test constraints (PK, FK, UNIQUE, CHECK) and their error translations",
+      "Verify data migrations: counts, checksums, sampled mapping, idempotency, rollback",
+      "Design synthetic test data and verify end-to-end flows from the rows up",
+    ],
+    prereqIds: ["mod-a"],
+    lessons: lessonsF,
+    cards: cardsF,
+    quiz: quizF,
+    challenges: challengesF,
+    recap: [
+      "The database is the record: rows settle what screens dispute.",
+      "LEFT JOIN + IS NULL finds absences; ROW_NUMBER finds duplicates; LAG finds jumps.",
+      "Constraints are executable requirements - violate each one and check the error translation.",
+      "Migration testing is reconciliation: counts, checksums, sampled mapping, idempotency, rehearsed rollback.",
+      "Synthetic, seeded, run-scoped data keeps suites repeatable - and never copies real customers.",
+    ],
+    minutes: 45,
+  },
 ];
 
 export const moduleById = (id: string): LearningModule | undefined => modules.find((m) => m.id === id);
@@ -173,19 +204,13 @@ export const challengeById = (id: string) => modules.flatMap((m) => m.challenges
 
 export const allConceptCards = modules.flatMap((m) => m.cards);
 
-export const goalLabels: Record<Goal, string> = {
-  fundamentals: "Learn QA fundamentals",
-  manual: "Practise manual testing",
-  istqb: "Prepare for ISTQB-style questions",
-  automation: "Develop automation skills",
-  interview: "Prepare for QA interviews",
-};
+export { goalLabels } from "./goals";
 
 /** Ordered module suggestions per goal; access to everything stays open. */
 export const goalModuleOrder: Record<Goal, string[]> = {
-  fundamentals: ["mod-a", "mod-b", "mod-c", "mod-d", "mod-e"],
-  manual: ["mod-c", "mod-d", "mod-e", "mod-a", "mod-b"],
-  istqb: ["mod-a", "mod-b", "mod-d", "mod-c", "mod-e"],
-  automation: ["mod-e", "mod-c", "mod-b", "mod-d", "mod-a"],
-  interview: ["mod-a", "mod-d", "mod-c", "mod-e", "mod-b"],
+  fundamentals: ["mod-a", "mod-b", "mod-c", "mod-d", "mod-e", "mod-f"],
+  manual: ["mod-c", "mod-d", "mod-f", "mod-e", "mod-a", "mod-b"],
+  istqb: ["mod-a", "mod-b", "mod-d", "mod-c", "mod-e", "mod-f"],
+  automation: ["mod-e", "mod-c", "mod-f", "mod-b", "mod-d", "mod-a"],
+  interview: ["mod-a", "mod-d", "mod-f", "mod-c", "mod-e", "mod-b"],
 };

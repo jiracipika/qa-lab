@@ -3,6 +3,43 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.4 - 2026-11-07)
+
+- **Read-aloud (voice transcriber)**: every lesson section has a Listen/Stop button
+  (Web Speech API, `src/lib/speech.ts` + SpeakButton). Click a section to hear it;
+  click again (or navigate away) to stop. Markdown-lite markers are stripped before
+  speech; long scripts are queued in sentence-sized chunks (some browsers truncate
+  long single utterances). Hidden entirely on browsers without speechSynthesis.
+  Pure helpers unit-tested (tests/speech.test.ts).
+- **Per-module content lazy-loading**: split the shell from the content layer -
+  `src/content/goals.ts` (tiny, eager), Layout computes the due-chip count via a
+  dynamic import of selectors, ui.tsx slimmed (lesson rendering moved to
+  lessonUi.tsx, keeping glossary + all diagram components out of the entry), and the
+  Dashboard became a lazy route like every other page. Entry chunk 178.7 -> 64.7 kB
+  gzip (-64%); module content rides in one async shared chunk (114 kB gzip) that
+  loads behind first paint.
+- **Playwright smoke suite** (`e2e/smoke.spec.ts`, `npm run test:e2e`): real-browser
+  checks over the production build via vite preview - fresh onboarding, all 13 routes
+  via direct SPA navigation with zero console/page errors, Module F diagram rendered,
+  read-aloud toggle safe in voice-less headless browsers, 390px mobile (no horizontal
+  overflow, drawer opens and closes on Escape), dark theme before paint. Desktop 1440
+  + mobile projects. Local-only by design: the deployment GitHub token cannot push
+  .github/workflows/*, so repository-CI wiring waits for a workflow-scoped token.
+  Two real a11y fixes fell out of it: the dashboard hero lesson title is now a real
+  heading (h2), and the mobile drawer test asserts aria state instead of CSS transforms.
+- **Module F - SQL and database testing** (third planned roadmap item now built):
+  6 lessons (tables/joins as evidence, SELECT to window functions + bound-parameter
+  practice, constraints as executable requirements, migration verification incl.
+  timezone traps + idempotency + rollback, synthetic/masked test data, end-to-end
+  verification from the rows up), 12 flashcards (code-api cards carry real SQL),
+  20 quiz questions (5 multi, every distractor annotated), 3 challenges (prove the
+  double fee with data, rewrite a migration ticket's missing ACs, diagnose a
+  midnight-timezone flaky reconciliation), plus a 10th interactive diagram
+  (db-schema: clickable mini banking schema with its constraints).
+- Curriculum now: 6 modules, 36 lessons, 72 flashcards, 120 quiz questions,
+  19 challenges, 10 interactive diagrams.
+- Mimosa deep scan after the changes: 0 findings, 0 advisories.
+
 ## Completed (release 1.3 - 2026-11-07)
 
 - **Module E - API testing** (Postman/Bruno/REST Assured flavour, second planned roadmap
@@ -101,6 +138,17 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 - Settings: goal, theme, motion, export download, import with validation + overwrite
   confirmation, reset with confirmation, storage-error banner.
 
+## Verification (2026-11-07, release 1.4)
+
+- `npx tsc -b` clean; `npx vite build` succeeds: entry 64.7 kB gzip + shared content
+  chunk 114 kB gzip (async) + ~14 route/component chunks.
+- `npx vitest run`: 66/66 across 8 files - content contract validates 6 modules;
+  new speech-helper tests cover markdown stripping, sentence-boundary chunking, and
+  block serialisation.
+- `npm run test:e2e` (Playwright, real Chromium): 9 passed, 1 skipped (mobile-only on
+  desktop), 0 runtime errors across 13 routes on desktop 1440 and mobile 390.
+- Non-ASCII scan clean on all new/edited files.
+
 ## Verification (2026-11-07, release 1.3)
 
 - `npx tsc -b` clean; `npx vite build` succeeds; entry 178.7 kB gzip (content rides in the
@@ -141,7 +189,8 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 ## Commands
 
 - `npm run dev` - local dev server
-- `npm test` - all automated checks (62)
+- `npm test` - all automated checks (66, unit + content + games + e2e jsdom)
+- `npm run test:e2e` - Playwright real-browser smoke suite (desktop + mobile)
 - `npm run build` - typecheck + production build
 - Deploy: push to GitHub `main`; Vercel builds automatically (vercel.json: vite, SPA rewrites).
 
@@ -157,13 +206,12 @@ Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family la
 
 ## Next concrete task (pick one)
 
-1. Per-module content lazy-loading (content currently rides in the shared entry chunk;
-   each module adds ~20 kB gzip to it).
-2. Real-browser smoke test (Playwright) with desktop + mobile viewports and console-error
-   assertion - run locally (the GitHub token cannot push `.github/workflows/*`, so CI
-   wiring waits for a scoped token).
-3. Module F from the roadmap: "SQL and database testing" (SELECT to window functions,
-   joins for reconciliation, data integrity, migration verification).
+1. Module G from the roadmap: "Performance testing" (load/stress/soak, k6/JMeter
+   scripting, percentiles over averages, finding the breaking point).
+2. Optional read-aloud extension: SpeakButton on quiz questions and module overview
+   pages (the lib and component are reusable as-is).
+3. CI wiring for the Playwright suite once a workflow-scoped GitHub token exists
+   (config is ready; `.github/workflows/*` pushes currently fail with the token).
 
 ## Deployment
 

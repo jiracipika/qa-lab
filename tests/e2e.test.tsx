@@ -37,7 +37,8 @@ describe("learner journey", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     // 2. Open a module and complete a lesson
-    await user.click(screen.getByRole("link", { name: /Open lesson/ }));
+    // The dashboard itself is a lazy chunk now - wait for the hero CTA to appear
+    await user.click((await screen.findAllByRole("link", { name: /Open lesson/ }))[0]);
     // The lesson route is lazy - wait for a control that only exists on the lesson page
     await user.click(await screen.findByRole("button", { name: /Mark lesson complete/ }));
     expect(await screen.findByText(/Lesson completed/)).toBeInTheDocument();

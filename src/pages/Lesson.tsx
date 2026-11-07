@@ -5,7 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { moduleById } from "../content";
 import { useStore } from "../state/store";
-import { EmptyState, LessonBlocks } from "../components/ui";
+import { EmptyState } from "../components/ui";
+import { LessonBlocks } from "../components/lessonUi";
+import { SpeakButton } from "../components/SpeakButton";
+import { blocksToSpeech, plainText } from "../lib/speech";
 
 export function LessonPage() {
   const { moduleId, lessonId } = useParams();
@@ -24,6 +27,7 @@ export function LessonPage() {
   const next = mod.lessons[idx + 1];
   const done = Boolean(state.lessons[lesson.id]);
   const bookmarked = state.bookmarks.some((b) => b.kind === "lesson" && b.refId === lesson.id);
+  const lessonScript = blocksToSpeech(lesson.blocks);
 
   return (
     <article className="fade-in">
@@ -36,11 +40,18 @@ export function LessonPage() {
         <p className="lede">
           {lesson.minutes} min read - {lesson.objectives[0]}
         </p>
+        <div className="row" style={{ marginTop: 8 }}>
+          <SpeakButton text={`${lesson.title}. ${lessonScript}`} label="this lesson" />
+          <span className="small muted">read-aloud works section by section too</span>
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: 14 }}>
-        <h2>Objectives</h2>
-        <ul style={{ margin: 0, paddingLeft: "1.2em" }}>
+        <div className="row between">
+          <h2 style={{ margin: 0 }}>Objectives</h2>
+          <SpeakButton text={plainText(lesson.objectives.join(". "))} label="objectives" />
+        </div>
+        <ul style={{ margin: "10px 0 0", paddingLeft: "1.2em" }}>
           {lesson.objectives.map((o) => (
             <li key={o}>{o}</li>
           ))}
@@ -51,7 +62,13 @@ export function LessonPage() {
 
       {lesson.commonMistakes.length > 0 && (
         <div className="card" style={{ marginTop: 16 }}>
-          <h2>Common mistakes</h2>
+          <div className="row between">
+            <h2 style={{ margin: 0 }}>Common mistakes</h2>
+            <SpeakButton
+              text={plainText(lesson.commonMistakes.map((m) => `${m.mistake}. The fix: ${m.fix}`).join(" "))}
+              label="common mistakes"
+            />
+          </div>
           <ul style={{ margin: 0, paddingLeft: "1.2em" }}>
             {lesson.commonMistakes.map((m) => (
               <li key={m.mistake} style={{ marginBottom: 8 }}>
@@ -66,7 +83,13 @@ export function LessonPage() {
 
       {lesson.confusedWith && lesson.confusedWith.length > 0 && (
         <div className="card" style={{ marginTop: 14 }}>
-          <h2>Easily confused</h2>
+          <div className="row between">
+            <h2 style={{ margin: 0 }}>Easily confused</h2>
+            <SpeakButton
+              text={plainText(lesson.confusedWith.map((c) => `${c.a} versus ${c.b}. ${c.tell}`).join(" "))}
+              label="confusion pairs"
+            />
+          </div>
           {lesson.confusedWith.map((c) => (
             <div key={c.a + c.b} className="defn" style={{ background: "var(--bg-raised)" }}>
               <strong>{c.a}</strong> vs <strong>{c.b}</strong>
@@ -115,8 +138,11 @@ export function LessonPage() {
 
       {/* Recap */}
       <div className="card" style={{ marginTop: 14 }}>
-        <h2>Recap</h2>
-        <ul style={{ margin: 0, paddingLeft: "1.2em" }}>
+        <div className="row between">
+          <h2 style={{ margin: 0 }}>Recap</h2>
+          <SpeakButton text={plainText(lesson.recap.join(" "))} label="the recap" />
+        </div>
+        <ul style={{ margin: "10px 0 0", paddingLeft: "1.2em" }}>
           {lesson.recap.map((r) => (
             <li key={r}>{r}</li>
           ))}

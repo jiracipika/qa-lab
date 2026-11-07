@@ -221,11 +221,11 @@ export const roadmap: RoadmapItem[] = [
     tools: ["k6", "JMeter"],
   },
   {
-    id: "rm-sql",
-    title: "SQL and database testing",
-    blurb: "SELECT to window functions, joins for reconciliation, data integrity constraints, migration verification, test data design with synthetic data.",
-    tracks: ["Automation", "Banking QA"],
-    tools: ["SQL", "PostgreSQL"],
+    id: "rm-mobile",
+    title: "Mobile testing",
+    blurb: "Native vs responsive patterns, device fragmentation, touch and gesture flows, install/update paths, and device-farm strategies.",
+    tracks: ["Manual testing", "Automation"],
+    tools: ["Appium", "Playwright"],
   },
   {
     id: "rm-java",

@@ -20,20 +20,25 @@ npm run dev        # http://localhost:5173
 Other commands:
 
 ```bash
-npm test           # run the 62 automated checks (unit + content + games + e2e, 4 modules)
+npm test           # run the 66 automated checks (unit + content + games + jsdom e2e)
+npm run test:e2e   # Playwright real-browser smoke suite (desktop + mobile)
 npm run build      # typecheck + production build into dist/
 npm run preview    # serve the production build locally
 ```
 
 ## What is inside
 
-- **Five complete modules** (30 lessons, 60 concept flashcards, 100 original quiz
-  questions, 16 practical challenges, 9 interactive diagrams):
+- **Six complete modules** (36 lessons, 72 concept flashcards, 120 original quiz
+  questions, 19 practical challenges, 10 interactive diagrams):
   - Module A - Testing fundamentals
   - Module B - Testing through development and delivery
   - Module C - Practical test design
   - Module D - Defect management and QA documentation (Jira/Xray/Confluence flavour)
   - Module E - API testing (Postman, Bruno, REST Assured)
+  - Module F - SQL and database testing (queries, integrity, migrations, test data)
+- **Read-aloud**: every lesson section has a Listen button - the browser reads it to
+  you, section by section, with a click to stop (Web Speech API; hidden where
+  unsupported).
 - **Boundary playground**: a live teaching widget - probe a numeric field that accepts
   18-65 and watch exactly where it flips from valid to invalid (same engine as the
   Boundary Hunter game).

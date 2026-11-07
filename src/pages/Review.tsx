@@ -9,7 +9,8 @@ import { useStore } from "../state/store";
 import { dueConceptCards } from "../state/selectors";
 import { RATING_LABELS, previewIntervals } from "../lib/srs";
 import type { Rating } from "../types/state";
-import { CodeBlock, EmptyState } from "../components/ui";
+import { EmptyState } from "../components/ui";
+import { CodeBlock } from "../components/lessonUi";
 
 export function ReviewPage() {
   const [tab, setTab] = useState<"concepts" | "cases">("concepts");

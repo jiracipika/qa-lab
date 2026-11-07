@@ -5,7 +5,8 @@ import { Link, useParams } from "react-router-dom";
 import { modules } from "../content";
 import { challengeById } from "../content";
 import { useStore } from "../state/store";
-import { CodeBlock, EmptyState, T } from "../components/ui";
+import { EmptyState } from "../components/ui";
+import { CodeBlock, T } from "../components/lessonUi";
 
 export function ChallengesList() {
   const { state } = useStore();
