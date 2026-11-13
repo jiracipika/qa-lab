@@ -25,12 +25,11 @@ export function ModulesList() {
         const p = moduleLessonProgress(state, m.id);
         const best = moduleQuizBest(state, m.id);
         return (
-          <div className={`card${m.id === firstOpen ? " sketch" : ""}`} key={m.id} style={{ marginBottom: 14 }}>
+          <div className={`card module-card${m.id === firstOpen ? " sketch" : ""}`} key={m.id} style={{ marginBottom: 14 }}>
+            <span className="module-letter" aria-hidden>{m.letter}</span>
             <div className="row between" style={{ alignItems: "flex-start" }}>
               <div>
-                <h2 style={{ marginBottom: 4 }}>
-                  <span aria-hidden style={{ color: "var(--accent)", marginRight: 2 }}>{m.letter}.</span> {m.title}
-                </h2>
+                <h2 style={{ marginBottom: 4 }}>{m.letter}. {m.title}</h2>
                 <p className="muted" style={{ margin: 0 }}>{m.subtitle}</p>
               </div>
               <span className={`chip ${m.level === "foundation" ? "chip-info" : "chip-warn"}`}>{m.level}</span>
@@ -42,6 +41,7 @@ export function ModulesList() {
               <span className="chip">{m.challenges.length} challenges</span>
               <span className="chip">~{m.minutes} min</span>
               {best !== null && <span className="chip chip-ok">quiz best {best}%</span>}
+              {p.pct > 0 && <span className="chip chip-accent">{p.pct}% read</span>}
             </div>
             <div style={{ marginBottom: 12 }}>
               <ProgressBar pct={p.pct} label={`Module ${m.letter} lesson progress`} />

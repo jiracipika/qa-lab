@@ -10,7 +10,12 @@ const glossaryLookup = (id: string) => glossary.find((g) => g.id === id);
 export function CodeBlock({ code }: { code: CodeSample }) {
   return (
     <div className="codeblock">
-      {code.caption && <span className="code-caption">{code.caption}</span>}
+      {(code.caption || code.lang) && (
+        <div className="code-head">
+          {code.caption && <span className="code-caption">{code.caption}</span>}
+          <span className="code-lang" aria-hidden>{code.lang}</span>
+        </div>
+      )}
       <code>{code.content}</code>
     </div>
   );

@@ -38,7 +38,7 @@ export function Dashboard() {
   const isNew = state.activity.length === 0;
 
   return (
-    <div className="fade-in">
+    <div className="fade-in stagger">
       <PageHead
         eyebrow="Your workbook"
         title={isNew ? "Welcome to QABrew" : "Your learning workspace"}

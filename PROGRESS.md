@@ -3,6 +3,32 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.5 "visual polish" - 2026-11-12)
+
+- Execution polish within the DESIGN.md contract (no identity change):
+  - Sidebar: graph-paper texture behind nav (matches diagram frames), dashed dividers
+    around brand block and footer, accent icon on active nav, quieter section labels.
+  - Typography: h1 2.05rem with text-wrap balance; lede larger; stat numerals set in
+    DM Serif Display 1.95rem with uppercase tracked labels.
+  - Cards/system: radius 12/8, softer layered shadows (+ --shadow-lift token), thicker
+    progress bars, chips tabular-nums, table row hover, tabs bolder active state.
+  - Code blocks: header row with caption + language tag chip, accent left rule.
+  - Empty states: titles in Caveat hand font (workbook voice).
+  - Module cards: big serif chapter letter watermarked behind content + "% read" chip.
+  - One orchestrated dashboard entrance (staggered rise) - TRANSFORM-ONLY by design:
+    an earlier opacity-0 entrance could trap content invisible in non-painting webviews
+    (verified: hero stuck at opacity 0 in the embedded browser until repaint); transform-
+    only keeps content visible even if the animation clock never advances. Reduced-motion
+    still disables it entirely.
+  - Themed thin scrollbars, primary button resting shadow, quiz option hover shadow.
+- Verified: vitest 66/66, tsc clean, build ok, Playwright 9 passed/1 skipped (desktop +
+  mobile, 13 routes, zero runtime errors, no horizontal overflow). Visual check via
+  embedded browser: one real bug found and fixed (the opacity entrance trap above);
+  the vision-critique channel was unreliable this session (duplicate CDN URLs), so the
+  visual sign-off rests on the Playwright assertions + DOM-level checks + the critique
+  that did land (sidebar 8/10; its remaining complaints traced to the animation timing
+  artifact).
+
 ## Completed (release 1.4 - 2026-11-07)
 
 - **Read-aloud (voice transcriber)**: every lesson section has a Listen/Stop button
