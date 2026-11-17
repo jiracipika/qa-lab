@@ -14,7 +14,8 @@ export interface BoundarySpec {
 export interface BoundaryRound {
   id: string;
   spec: BoundarySpec;
-  technique: "2-point" | "3-point" | "robust";
+  /** ISTQB CTFL 4.0 convention: 2-value = boundary + invalid neighbour (min-1, min, max, max+1); 3-value = boundary + both neighbours (min-1, min, min+1, max-1, max, max+1). */
+  technique: "2-value" | "3-value";
   scenario: string;
   candidates: number[];
 }
@@ -44,12 +45,13 @@ export function classify(spec: BoundarySpec, v: number): ValueClass {
 
 export function targetClasses(technique: BoundaryRound["technique"]): ValueClass[] {
   switch (technique) {
-    case "2-point":
-      return ["min", "max"];
-    case "3-point":
-      return ["min", "min+", "mid", "max-", "max"];
-    case "robust":
-      return ["below", "min", "min+", "mid", "max-", "max", "above"];
+    // Per ISTQB CTFL 4.0: each boundary value plus its closest neighbour in the
+    // adjacent partition. For 18-65: 17, 18, 65, 66.
+    case "2-value":
+      return ["below", "min", "max", "above"];
+    // Each boundary value plus both neighbours. For 18-65: 17, 18, 19, 64, 65, 66.
+    case "3-value":
+      return ["below", "min", "min+", "max-", "max", "above"];
   }
 }
 
@@ -99,36 +101,36 @@ export const boundaryRounds: BoundaryRound[] = [
   {
     id: "bh-1",
     spec: { name: "Transfer amount", unit: "EUR", min: 1.0, max: 10000.0, step: 0.01, rule: "Transfers accept 1.00 to 10,000.00 inclusive." },
-    technique: "3-point",
-    scenario: "A payment screen. Pick the values a 3-point BVA set needs.",
+    technique: "3-value",
+    scenario: "A payment screen. Pick the values a 3-value BVA set needs: each boundary plus both neighbours.",
     candidates: [0.99, 1.0, 1.01, 55.55, 250.0, 5000.5, 9998.0, 9999.99, 10000.0, 10000.01, 20000.0],
   },
   {
     id: "bh-2",
     spec: { name: "Customer age", unit: "years", min: 18, max: 65, step: 1, rule: "The product is available to customers aged 18 to 65 inclusive." },
-    technique: "2-point",
-    scenario: "Adult banking product. Pick only what a 2-point BVA set needs.",
+    technique: "2-value",
+    scenario: "Adult banking product. Pick the 2-value set: each boundary plus its nearest invalid neighbour.",
     candidates: [0, 17, 18, 19, 30, 41, 64, 65, 66, 99],
   },
   {
     id: "bh-3",
     spec: { name: "Card top-up", unit: "EUR", min: 10, max: 500, step: 1, rule: "Whole-euro top-ups from 10 to 500 inclusive." },
-    technique: "robust",
-    scenario: "Prepaid top-up with whole euros only. A robustness analysis wants the invalid neighbours too.",
+    technique: "3-value",
+    scenario: "Prepaid top-up with whole euros only. The 3-value set needs both neighbours of each boundary.",
     candidates: [8, 9, 10, 11, 99, 255, 499, 500, 501, 502],
   },
   {
     id: "bh-4",
     spec: { name: "Nickname length", unit: "characters", min: 1, max: 30, step: 1, rule: "Payee nicknames are 1 to 30 characters." },
-    technique: "3-point",
-    scenario: "A text field's length rule. Which lengths make the 3-point set?",
+    technique: "3-value",
+    scenario: "A text field's length rule. Which lengths make the 3-value set?",
     candidates: [0, 1, 2, 5, 15, 16, 29, 30, 31, 45],
   },
   {
     id: "bh-5",
     spec: { name: "Scheduled days ahead", unit: "days", min: 1, max: 30, step: 1, rule: "Transfers can be scheduled 1 to 30 days ahead." },
-    technique: "robust",
-    scenario: "Future-dated transfers. Robust set: include the invalid neighbours.",
+    technique: "2-value",
+    scenario: "Future-dated transfers. The 2-value set: each boundary plus its nearest invalid neighbour.",
     candidates: [-1, 0, 1, 2, 15, 16, 29, 30, 31, 60],
   },
 ];

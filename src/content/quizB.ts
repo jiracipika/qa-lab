@@ -235,7 +235,7 @@ export const quizB: QuizQuestion[] = [
     correct: ["a", "b", "c"],
     why: "Shift-left moves quality activities earlier: testable requirements, acceptance tests before code, immediate static feedback - all catch defects at their source.",
     distractors: {
-      d: "A late hardening phase is the classic shift-*right* of testing effort - the pattern shift-left exists to avoid.",
+      d: "Deferring testing to a late hardening phase is the end-of-cycle anti-pattern shift-left exists to correct. (Shift-right properly means testing in production - monitoring, canaries - a deliberate strategy, not deferral.)",
     },
   },
   {

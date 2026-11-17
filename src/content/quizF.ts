@@ -250,15 +250,15 @@ export const quizF: QuizQuestion[] = [
     stem: "Your reconciliation query runs while a batch job is still writing rows, and you see a 'partial' state. What is the correct conclusion?",
     multi: false,
     options: [
-      { id: "q13a", text: "Nothing yet - under transaction isolation, in-flight states are visible; settle the flow, then query for the verdict" },
+      { id: "q13a", text: "Nothing yet - the batch may commit incrementally (and some isolation levels permit reading in-flight data), so a mid-run snapshot can legitimately show a partial state; settle the flow, then query for the verdict" },
       { id: "q13b", text: "The database has a defect - partial writes must be impossible to observe" },
       { id: "q13c", text: "The reconciliation query needs more JOINs to see the truth" },
       { id: "q13d", text: "The batch job must be stopped mid-run to get a clean look" },
     ],
     correct: ["q13a"],
-    why: "Isolation levels define what concurrent queries may see, including legitimate in-flight states. A verdict query belongs after the flow settles - and true partial writes (all-or-nothing broken) are diagnosed with the transaction boundaries, not a snapshot mid-run.",
+    why: "Isolation level and commit granularity determine what a concurrent query may legitimately see mid-run. A verdict query belongs after the flow settles - and true partial writes (all-or-nothing broken) are diagnosed with the transaction boundaries, not a snapshot mid-run.",
     distractors: {
-      q13b: "Observing in-flight data is not a broken write guarantee - it is how isolation works. The defect question is whether the transaction finally commits all-or-nothing.",
+      q13b: "Observing mid-run state is not automatically a broken write guarantee - under stricter isolation levels it can still be a legitimate view of committed-but-incomplete batches. The defect question is whether the transaction finally commits all-or-nothing.",
       q13c: "More JOINs change what you read, not when to read it. Timing is the issue here.",
       q13d: "Stopping a writer mid-run manufactures a broken state - the opposite of evidence.",
     },

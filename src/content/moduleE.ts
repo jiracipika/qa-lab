@@ -320,7 +320,7 @@ export const lessonsE: Lesson[] = [
       {
         kind: "example",
         title: "The transfer amount boundary set",
-        text: "Rule: amount 0.01-10000.00 EUR, two decimals, rejected with 422 AMOUNT_OUT_OF_RANGE. The set: 0.00 (reject), 0.01 (accept), 0.02 (accept), 9999.99 (accept), 10000.00 (accept), 10000.01 (reject). Exactly the Boundary Hunter logic - and the same 2-point/3-point thinking transfers to any numeric field in any API.",
+        text: "Rule: amount 0.01-10000.00 EUR, two decimals, rejected with 422 AMOUNT_OUT_OF_RANGE. The set: 0.00 (reject), 0.01 (accept), 0.02 (accept), 9999.99 (accept), 10000.00 (accept), 10000.01 (reject). Exactly the Boundary Hunter logic - and the same 2-value/3-value thinking transfers to any numeric field in any API.",
       },
       {
         kind: "diagram",

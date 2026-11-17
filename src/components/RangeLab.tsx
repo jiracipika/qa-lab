@@ -30,13 +30,13 @@ const CLASS_LABEL: Record<ValueClass, string> = {
 };
 
 const CLASS_VERDICT: Record<ValueClass, string> = {
-  below: "Rejected: below the minimum, so the field refuses it.",
-  min: "Accepted: exactly the minimum - the classic boundary pick.",
-  "min+": "Accepted: the first value inside the range.",
-  mid: "Accepted: a middle value - usually the safe, boring case.",
-  "max-": "Accepted: the last value inside the range.",
-  max: "Accepted: exactly the maximum - the other classic boundary pick.",
-  above: "Rejected: above the maximum, so the field refuses it.",
+  below: "Rejected - one step outside the valid range.",
+  min: "Accepted - the classic boundary pick.",
+  "min+": "Accepted - the first step inside.",
+  mid: "Accepted - the boring, safe case (an EP representative, not BVA).",
+  "max-": "Accepted - the last step inside.",
+  max: "Accepted - the other classic boundary pick.",
+  above: "Rejected - one step outside the valid range.",
 };
 
 export function isValidClass(cls: ValueClass): boolean {
@@ -58,9 +58,16 @@ function RangeLine({ spec, value, cls }: { spec: BoundarySpec; value: number; cl
   const ticks = [spec.min - 1, spec.min, spec.min + 1, spec.max - 1, spec.max, spec.max + 1];
   return (
     <svg className="rangelab-line" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Valid band from ${spec.min} to ${spec.max}. Current value ${value} is ${CLASS_LABEL[cls]}.`}>
+      <defs>
+        {/* hatched fill for the invalid zones - readable even at a glance */}
+        <pattern id="rangelab-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <rect width="7" height="7" fill="var(--bad-soft)" />
+          <line x1="0" y1="0" x2="0" y2="7" stroke="var(--bad-line)" strokeWidth="2.2" />
+        </pattern>
+      </defs>
       {/* invalid zones */}
-      <rect x={pad} y={22} width={Math.max(0, x(spec.min) - pad)} height={14} fill="var(--bad-soft)" />
-      <rect x={x(spec.max)} y={22} width={Math.max(0, W - pad - x(spec.max))} height={14} fill="var(--bad-soft)" />
+      <rect x={pad} y={22} width={Math.max(0, x(spec.min) - pad)} height={14} fill="url(#rangelab-hatch)" />
+      <rect x={x(spec.max)} y={22} width={Math.max(0, W - pad - x(spec.max))} height={14} fill="url(#rangelab-hatch)" />
       {/* valid band */}
       <rect x={x(spec.min)} y={22} width={x(spec.max) - x(spec.min)} height={14} fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="1.5" />
       <text x={(x(spec.min) + x(spec.max)) / 2} y={19} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--accent-strong)">
@@ -79,7 +86,7 @@ function RangeLine({ spec, value, cls }: { spec: BoundarySpec; value: number; cl
               {t}
             </text>
             {!pinNear && (
-              <text x={x(t)} y={14} textAnchor="middle" fontSize="9" fill={valid ? "var(--accent)" : "var(--bad)"}>
+              <text x={x(t)} y={14} textAnchor="middle" fontSize="10.5" fontWeight="700" fill={valid ? "var(--accent)" : "var(--bad)"}>
                 {valid ? "\u2713" : "\u2717"}
               </text>
             )}
@@ -107,6 +114,11 @@ export function RangeLab({ spec = AGE_SPEC }: { spec?: BoundarySpec }) {
     const base = has ? parsed : spec.min;
     setRaw(String(Math.min(spec.max + 6, Math.max(spec.min - 6, base + d))));
   };
+  const fmt = (v: number) => (spec.step < 1 ? v.toFixed(2) : String(v));
+  // ISTQB CTFL 4.0 sets for the current spec: boundary + adjacent-partition
+  // neighbour (2-value), and boundary + both neighbours (3-value).
+  const twoValueSet = [spec.min - spec.step, spec.min, spec.max, spec.max + spec.step].map((v) => Math.round(v * 100) / 100);
+  const threeValueSet = [spec.min - spec.step, spec.min, spec.min + spec.step, spec.max - spec.step, spec.max, spec.max + spec.step].map((v) => Math.round(v * 100) / 100);
 
   return (
     <div className="rangelab">
@@ -151,6 +163,16 @@ export function RangeLab({ spec = AGE_SPEC }: { spec?: BoundarySpec }) {
             {v}
           </button>
         ))}
+      </div>
+
+      <div className="rangelab-sets">
+        <span className="rangelab-sets-label">ISTQB sets for {spec.min}-{spec.max}:</span>
+        <span className="rangelab-set">
+          <strong>2-value</strong> {twoValueSet.map(fmt).join(", ")}
+        </span>
+        <span className="rangelab-set">
+          <strong>3-value</strong> {threeValueSet.map(fmt).join(", ")}
+        </span>
       </div>
     </div>
   );

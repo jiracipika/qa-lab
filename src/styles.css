@@ -250,12 +250,15 @@ code {
   background: var(--bg-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 22px 24px 20px;
   box-shadow: var(--shadow);
 }
 .card + .card { margin-top: 14px; }
 .card.pad-sm { padding: 14px 16px; }
 .card.tight { box-shadow: none; }
+/* dashboard action cards: equal height, CTA pinned to the bottom edge */
+.action-card { display: flex; flex-direction: column; }
+.action-card > :last-child { margin-top: auto; padding-top: 10px; }
 
 /* hand-drawn variant: reserved for primary/interactive surfaces */
 .sketch {
@@ -363,7 +366,7 @@ code {
 .row.between { justify-content: space-between; }
 .spacer { flex: 1; }
 
-.progressbar { height: 10px; border-radius: 99px; background: var(--bg-inset); overflow: hidden; border: 1px solid var(--border); }
+.progressbar { height: 10px; border-radius: 99px; background: repeating-linear-gradient(135deg, var(--bg-inset) 0 6px, var(--bg-hover) 6px 12px); overflow: hidden; border: 1px solid var(--border); }
 .progressbar > div { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.4s ease; }
 
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
@@ -629,6 +632,10 @@ table.data tr:last-child td { border-bottom: none; }
 .rangelab-verdict[data-valid="yes"] .verdict-badge { color: var(--ok); }
 .rangelab-verdict[data-valid="no"] .verdict-badge { color: var(--bad); }
 .rangelab-jumps { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.rangelab-sets { display: flex; gap: 8px 18px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); align-items: baseline; }
+.rangelab-sets-label { font-family: var(--font-hand); font-size: 1.05rem; color: var(--ink-soft); }
+.rangelab-set { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-soft); background: var(--bg-inset); border: 1px solid var(--border); border-radius: 7px; padding: 3px 10px; }
+.rangelab-set strong { font-family: var(--font-sans); color: var(--accent-strong); margin-right: 6px; }
 
 /* destructive actions get their own visually separated zone */
 .danger-zone { border: 1.5px dashed var(--bad-line); background: var(--bad-soft); }

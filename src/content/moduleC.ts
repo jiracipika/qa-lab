@@ -61,7 +61,7 @@ export const lessonsC: Lesson[] = [
     minutes: 7,
     objectives: [
       "Explain why defects cluster at boundaries",
-      "Derive 2-point and 3-point boundary values from a rule",
+      "Derive 2-value and 3-value boundary sets from a rule (ISTQB CTFL 4.0 convention)",
       "Document boundary tests so a reviewer can verify completeness",
     ],
     blocks: [
@@ -73,13 +73,13 @@ export const lessonsC: Lesson[] = [
         kind: "definition",
         term: "Boundary value analysis",
         glossaryId: "boundary-value-analysis",
-        text: "A technique that selects test values at, just inside, and just outside the boundaries of an equivalence partition. 2-point BVA takes the boundary and its nearest neighbour inside/outside per edge; 3-point BVA takes min, min+, and max- (interior) plus max; robust variants add invalid neighbours outside.",
+        text: "A technique that selects test values at, just inside, and just outside the boundaries of an equivalence partition. ISTQB CTFL 4.0 defines two strengths: 2-value BVA takes, for each boundary, the boundary value and its closest neighbour in the adjacent partition (so min-1, min, max, max+1); 3-value BVA takes the boundary and both its neighbours (min-1, min, min+1, max-1, max, max+1). For an age rule of 18-65: 2-value = 17, 18, 65, 66; 3-value = 17, 18, 19, 64, 65, 66.",
       },
-      { kind: "diagram", diagramId: "boundary-values", note: "Click the number line regions to see which technique (2-point, 3-point, robust) each value belongs to." },
+      { kind: "diagram", diagramId: "boundary-values", note: "Click the number line regions to see which technique (2-value, 3-value) each value belongs to - and why a mid value is not part of a boundary set." },
       {
         kind: "example",
         title: "Daily limit 5,000.00 - the boundary set",
-        text: "Rule: 0.01 <= amount <= 5,000.00 per day. 3-point set: 0.01 (min), 0.02 (min+), 2,500.00 (mid), 4,999.99 (max-), 5,000.00 (max). Robust adds 0.00 and 5,000.01 - the invalid neighbours that catch off-by-one comparisons. In money systems, test both decimals (0.01 steps) and, where the spec allows, integer-only fields (1, 5000, 5001).",
+        text: "Rule: 0.01 <= amount <= 5,000.00 per day, step 0.01. 2-value set: 0.00 (invalid), 0.01 (min), 5,000.00 (max), 5,000.01 (invalid). 3-value set: 0.00, 0.01, 0.02, 4,999.99, 5,000.00, 5,000.01. The invalid neighbours are what catch off-by-one comparisons. In money systems, test both decimals (0.01 steps) and, where the spec allows, integer-only fields (1, 5000, 5001).",
       },
       {
         kind: "list",
@@ -107,7 +107,7 @@ export const lessonsC: Lesson[] = [
     ],
     recap: [
       "Defects cluster at edges; BVA aims tests there.",
-      "3-point: min, min+, max-, max (plus mid). Robust adds invalid neighbours.",
+      "2-value: min-1, min, max, max+1 (boundary + adjacent-partition neighbour). 3-value adds min+1 and max-1. A mid value is an EP representative, not BVA.",
       "Boundaries are wherever a rule has an edge: numbers, dates, lengths, counts.",
     ],
   },

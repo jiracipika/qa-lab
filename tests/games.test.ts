@@ -24,40 +24,42 @@ describe("Boundary Hunter", () => {
     expect(classify(spec, 10000.01)).toBe("above");
   });
 
-  it("perfect 3-point set earns full points; misses and extras are penalised and explained", () => {
-    const round = boundaryRounds[0]; // 3-point, 1.00-10000.00
-    const perfect = ["below", "min", "min+", "mid", "max-", "max"] // not below - 3-point has 5 targets
-      .filter((c) => targetClasses(round.technique).includes(c as never))
-      .map((c) => valueForClass(round.spec, c as never));
+  it("perfect 3-value set earns full points; misses and extras are penalised and explained", () => {
+    const round = boundaryRounds[0]; // 3-value, 1.00-10000.00
+    const perfect = targetClasses(round.technique).map((c) => valueForClass(round.spec, c));
     const r = evaluateRound(round, perfect);
     expect(r.points).toBe(r.targetCount);
     expect(r.missed).toEqual([]);
     expect(r.extra).toEqual([]);
 
-    const partial = evaluateRound(round, [1, 5000]); // min + mid only
-    expect(partial.points).toBe(2);
-    expect(partial.missed.map((m) => m.cls).sort()).toEqual(["max", "max-", "min+"].sort());
+    const partial = evaluateRound(round, [1, 5000]); // min + a mid value
+    expect(partial.points).toBe(0); // 5 missed targets and the mid value counts as an extra pick
+    expect(partial.missed.map((m) => m.cls).sort()).toEqual(["above", "below", "max", "max-", "min+"].sort());
 
     const withExtras = evaluateRound(round, [...perfect, 55.55, 20000]);
     expect(withExtras.extra.length).toBe(2);
     expect(withExtras.points).toBe(r.targetCount - 2);
   });
 
-  it("2-point technique accepts exactly the two edges - mid values count as extra", () => {
-    const round = boundaryRounds[1]; // 2-point, age 18-65
-    const r = evaluateRound(round, [18, 65]);
-    expect(r.points).toBe(2);
+  it("2-value technique (ISTQB CTFL 4.0) needs each boundary AND its invalid neighbour", () => {
+    const round = boundaryRounds[1]; // 2-value, age 18-65
+    const r = evaluateRound(round, [17, 18, 65, 66]);
+    expect(r.points).toBe(4);
     expect(r.missed).toEqual([]);
-    const over = evaluateRound(round, [18, 65, 30]);
+    // the old "boundary pair only" answer now loses half the points: 17 and 66 are part of the set
+    const edgesOnly = evaluateRound(round, [18, 65]);
+    expect(edgesOnly.points).toBe(2);
+    expect(edgesOnly.missed.map((m) => m.cls).sort()).toEqual(["above", "below"].sort());
+    const over = evaluateRound(round, [17, 18, 65, 66, 30]);
     expect(over.extra).toEqual([{ value: 30, cls: "mid" }]);
   });
 
-  it("robust technique demands invalid neighbours", () => {
-    const round = boundaryRounds[2]; // robust, 10-500 whole euros
-    expect(targetClasses("robust")).toContain("below");
-    expect(targetClasses("robust")).toContain("above");
-    const r = evaluateRound(round, [9, 10, 11, 255, 499, 500, 501]);
-    expect(r.points).toBe(7);
+  it("3-value technique demands both neighbours of each boundary", () => {
+    const round = boundaryRounds[2]; // 3-value, 10-500 whole euros
+    expect(targetClasses("3-value")).toContain("below");
+    expect(targetClasses("3-value")).toContain("above");
+    const r = evaluateRound(round, [9, 10, 11, 499, 500, 501]);
+    expect(r.points).toBe(6);
   });
 
   it("all five rounds have candidate pools that contain every target value", () => {

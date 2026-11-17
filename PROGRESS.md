@@ -3,6 +3,41 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.6 "ISTQB BVA correctness + answer audit + polish" - 2026-11-17)
+
+- **BVA migrated to the ISTQB CTFL 4.0 convention** (the old content taught the pre-4.0
+  min/max-only "2-point" set, which is wrong for current exam prep):
+  - Boundary Hunter engine: technique set is now `2-value | 3-value`. 2-value targets
+    below/min/max/above (for 18-65: 17, 18, 65, 66); 3-value targets add min+ and max-
+    (17, 18, 19, 64, 65, 66). The obsolete "robust" mode was removed; a mid value is an
+    extra pick (it is the EP representative, not BVA). Rounds relabelled, scenarios
+    rewritten, unit + e2e tests updated (a "boundary pair only" answer now loses points).
+  - RangeLab playground shows the exact 2-value and 3-value sets for its range as chips;
+    verdict copy de-duplicated; invalid zones on the number line now use a hatched red
+    pattern (colour + texture, readable at a glance).
+  - Lesson c-l2 definition/example/recap, studyC flashcard + top-up challenge solution,
+  - moduleE example, studyE challenge, glossary BVA entry, and the Diagrams2 boundary
+    number line all rewritten to the 2-value/3-value wording with explicit sets.
+  - quizC: c-q3 replaced with the exam-style question ("complete 2-value BVA set for
+    integer ages 18-65" with the 3-value set and EP representatives as distractors).
+- **Full answer audit** (independent background pass over all 171 graded items:
+  quizA-F 120 questions, sorter 12, detective 8, interview cards, roadmap, test cases):
+  - Zero marked-answer mismatches after stem fixes. Applied: a-q5 stem reworded (option d
+    fairness), b-q12 distractor explanation corrected (late hardening is not "shift-right";
+    shift-right = testing in production), c-q1 stem now asks for the minimal pure-EP set,
+    f-q13 option/why corrected on transaction isolation (READ COMMITTED hides in-flight
+    writes; partial views come from incremental commits or looser isolation),
+    detective dd-pass-r3 char count 11 -> 12, duplicate roadmap id rm-perf ->
+    rm-perf-a11y-sec, tc-6 reclassified boundary -> positive (reconciliation is a
+    completeness check, not BVA).
+- **Dashboard polish** (within the design contract): action-card row now equal-height
+  with CTAs pinned to the bottom and all three CTAs primary-filled; hero module chip
+  upgraded to chip-accent; progress track gets a subtle diagonal hatch so an empty bar
+  reads as a track; card padding standardised 22/24/20.
+- Verified: vitest 66/66, tsc clean, vite build ok, Playwright 9 passed/1 skipped
+  (desktop + mobile, 13 routes). Browser check of dashboard + Boundary Hunter confirmed
+  the new sets row, hatched zones, and game labels.
+
 ## Completed (release 1.5 "visual polish" - 2026-11-12)
 
 - Execution polish within the DESIGN.md contract (no identity change):

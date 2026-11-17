@@ -246,11 +246,11 @@ Data-driven notes: one table, columns input / expected status / expected error c
     context:
       "Contract for POST /api/transfers: amount is a number in EUR, 0.01 to 10000.00 inclusive, at most two decimal places. Out-of-range or over-precision values are rejected with 422 and error code AMOUNT_OUT_OF_RANGE (the doc uses one code for both). The endpoint has a known habit of mis-serialising amounts sent as JSON strings. Design the boundary test set: values, why each is in the set, and the assertion beyond the status code.",
     hints: [
-      "Both edges plus their neighbours: what does 2-point and 3-point BVA give you here?",
+      "Both edges plus their neighbours: what does 2-value and 3-value BVA give you here?",
       "The precision rule (two decimals) is its own boundary: 250.755 is in-range but over-precision.",
       "JSON distinguishes 10000.00 (number) from \"10000.00\" (string) - the type trap deserves its own rows.",
     ],
-    solution: `Boundary set for amount 0.01-10000.00 (3-point thinking on both edges):
+    solution: `Boundary set for amount 0.01-10000.00 (3-value BVA on both edges):
 
 - 0.00 -> 422 AMOUNT_OUT_OF_RANGE (just below the minimum: proves the minimum is inclusive).
 - 0.01 -> 201 (exactly the minimum - the classic boundary pick).

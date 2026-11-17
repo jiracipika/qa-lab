@@ -87,7 +87,7 @@ export const quizA: QuizQuestion[] = [
     moduleId: "mod-a",
     topic: "Defects",
     multi: true,
-    stem: "A user reports a 'failure': the app shows a session-expired error. Which of the following could legitimately be root causes of an observed failure? (Select all that apply)",
+    stem: "A user reports a 'failure': the app shows a session-expired error. Which of the following could legitimately explain a user-reported problem like this? (Select all that apply - some reported 'failures' turn out not to be failures at all)",
     options: [
       { id: "a", text: "A defect in the session-renewal code" },
       { id: "b", text: "An environmental problem, such as a misconfigured load balancer timing out connections" },

@@ -6,11 +6,11 @@ import { useDiagramDetails, type DiagramDetail } from "./Diagrams1";
 /* ============ 5. Boundary values (number line) ============ */
 
 const boundaryDetails: DiagramDetail[] = [
-  { title: "Below: 4,999.99 (max-)", sub: "just inside, valid", body: "One minimum step inside the upper boundary. Catches defects where the comparison uses < instead of <=.", question: "Would max- alone catch a strict-inequality bug at the top edge? Why also test max?" },
+  { title: "Below: 4,999.99 (max-)", sub: "just inside, valid", body: "One minimum step inside the upper boundary. Included in the 3-value set; catches defects where the comparison uses < instead of <=.", question: "Would max- alone catch a strict-inequality bug at the top edge? Why also test max?" },
   { title: "Max: 5,000.00 (valid)", sub: "the boundary itself", body: "The edge value included in the valid range. The single most classic off-by-one location: is 5,000.00 accepted when the spec says 'up to 5,000.00'?", question: "'Up to 5,000.00' - inclusive or exclusive? What must you do when the spec does not say?" },
-  { title: "Above: 5,000.01 (invalid)", sub: "robust neighbour", body: "One step outside. A robust BVA set adds the invalid neighbours; 2-point sets stop at the boundary pair.", question: "For an integer field, what is the neighbour of max 3?" },
-  { title: "Mid: 2,500.00 (valid)", sub: "3-point extra", body: "A mid-range representative. 3-point BVA includes a nominal value to confirm ordinary behaviour, not just edges.", question: "Which other technique already gives you the mid-range representative?" },
-  { title: "Min / min+ / below-min", sub: "mirror at the lower edge", body: "0.01 (min), 0.02 (min+), 0.00 (invalid). Every range has two edges - testers famously test the upper and forget the lower.", example: "Rule: 0.01 <= amount <= 5,000.00.", question: "A field accepts 1-30 characters. What are min, min+, and below-min here?" },
+  { title: "Above: 5,000.01 (invalid)", sub: "adjacent-partition neighbour", body: "One step outside, in the adjacent partition. Both the 2-value and 3-value sets include it: the invalid neighbour is what catches a > vs >= mix-up.", question: "For an integer field, what is the neighbour of max 3?" },
+  { title: "Mid: 2,500.00 (valid)", sub: "not part of the BVA set", body: "A mid-range representative. BVA does not require it - that is the job of the equivalence-partition representative. Worth one sanity check, but it earns no place in a boundary set.", question: "Which other technique already gives you the mid-range representative?" },
+  { title: "Min / min+ / below-min", sub: "mirror at the lower edge", body: "0.00 (invalid), 0.01 (min), 0.02 (min+). Every range has two edges - testers famously test the upper and forget the lower.", example: "Rule: 0.01 <= amount <= 5,000.00. 2-value set: 0.00, 0.01, 5,000.00, 5,000.01. 3-value set: 0.00, 0.01, 0.02, 4,999.99, 5,000.00, 5,000.01.", question: "A field accepts 1-30 characters. What are the 2-value and 3-value sets here?" },
 ];
 
 export function BoundaryValuesDiagram() {
@@ -47,10 +47,10 @@ export function BoundaryValuesDiagram() {
         <button type="button" className="btn btn-sm" {...node(3)}>Mid</button>
         <button type="button" className="btn btn-sm" {...node(0)}>max-</button>
         <button type="button" className="btn btn-sm" {...node(1)}>max</button>
-        <button type="button" className="btn btn-sm" {...node(2)}>max+ (robust)</button>
+        <button type="button" className="btn btn-sm" {...node(2)}>max+ (invalid)</button>
       </div>
       <p className="small muted" style={{ marginTop: 0 }}>
-        Click the values on the line (or the buttons) to see which technique each value belongs to. Rule shown: 0.01-5,000.00, step 0.01.
+        Click the values on the line (or the buttons) to see which technique each value belongs to. Rule shown: 0.01-5,000.00, step 0.01. 2-value set: 0.00, 0.01, 5,000.00, 5,000.01 - 3-value set: 0.00, 0.01, 0.02, 4,999.99, 5,000.00, 5,000.01.
       </p>
       {panel()}
     </div>

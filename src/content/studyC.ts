@@ -16,8 +16,8 @@ export const cardsC: ConceptCard[] = [
     lessonId: "c-l2",
     topic: "Boundary value analysis",
     kind: "definition",
-    front: "Give a 3-point BVA set for a field accepting 0.01-5,000.00 (step 0.01)",
-    back: "0.01 (min), 0.02 (min+), a mid value (e.g. 2,500.00), 4,999.99 (max-), 5,000.00 (max). Robustness adds invalid neighbours: 0.00 and 5,000.01. The step defines 'just inside/outside'.",
+    front: "Give the 2-value and 3-value BVA sets for a field accepting 0.01-5,000.00 (step 0.01)",
+    back: "2-value: 0.00, 0.01, 5,000.00, 5,000.01 (each boundary plus its adjacent-partition neighbour). 3-value: 0.00, 0.01, 0.02, 4,999.99, 5,000.00, 5,000.01 (each boundary plus both neighbours). The step defines 'just inside/outside'; a mid value belongs to EP, not BVA.",
   },
   {
     id: "c-c3",
@@ -120,14 +120,14 @@ export const challengesC: Challenge[] = [
     minutes: 12,
     brief: "Derive a complete, technique-labelled boundary set - and catch the trap hiding in the rule.",
     context:
-      "Rule from the spec: 'Customers may top up a prepaid card with any whole-euro amount from 10 to 500 per transaction, up to 3 top-ups per day. Amounts are entered as whole euros only.'\n\n1) List your boundary tests for the amount, stating the technique (2-point, 3-point, or robust) you apply and why.\n2) List boundary tests for the daily top-up count.\n3) One boundary in this rule is easy to miss entirely. Which one?\n\nThen compare with the sample solution.",
+      "Rule from the spec: 'Customers may top up a prepaid card with any whole-euro amount from 10 to 500 per transaction, up to 3 top-ups per day. Amounts are entered as whole euros only.'\n\n1) List your boundary tests for the amount, stating the technique (2-value or 3-value) you apply and why.\n2) List boundary tests for the daily top-up count.\n3) One boundary in this rule is easy to miss entirely. Which one?\n\nThen compare with the sample solution.",
     hints: [
       "Whole euros only - so what is 'just below 10' and 'just above 500'? The step size is 1, not 0.01.",
       "The count rule ('up to 3 per day') has its own boundaries: 1st, 2nd, 3rd, 4th top-up - and their amounts interact with the amount rule.",
       "The sneaky boundary: the *day* itself. When does the daily counter reset - midnight? 24 rolling hours? Timezone? Test a top-up at 23:59 and one at 00:01.",
     ],
     solution:
-      "**Amount boundaries** (whole-euro step):\n- 3-point/robust set: 9 (reject), 10 (accept, min), 11 (min+), mid e.g. 250, 499 (max-), 500 (accept, max), 501 (reject). Since the step is 1 euro, 9/501 are the immediate invalid neighbours.\n- Also reject non-integer formats: 10.50 (if the field accepts it), 'ten', empty.\n\n**Count boundaries**: 1st top-up accepted; 2nd accepted; 3rd accepted (the 'up to 3' edge); 4th rejected with a clear message. Interaction: a 3rd top-up of 500 - count *and* amount boundaries stack; expect acceptance if rules are independent (and raise it if the spec is silent on cumulative daily *amounts* - a genuine gap).\n\n**The missable boundary - the day rollover**: does 'per day' reset at midnight (which timezone?), on a 24-hour rolling window, or per banking day? Tests: top-up 3 at 23:59, then 1 more at 00:01 - accepted or rejected? The spec does not say. That is a requirement question AND a test.\n\n**Technique labels**: amount set = robust 3-point BVA (with invalid neighbours); count = BVA on an ordinal (1,2,3,4); day rollover = boundary in the time dimension, found by questioning the rule, not by staring at numbers.",
+      "**Amount boundaries** (whole-euro step):\n- 2-value set: 9 (reject), 10 (accept, min), 500 (accept, max), 501 (reject). 3-value set adds 11 (min+) and 499 (max-). Since the step is 1 euro, 9/501 are the immediate invalid neighbours.\n- Also reject non-integer formats: 10.50 (if the field accepts it), 'ten', empty.\n\n**Count boundaries**: 1st top-up accepted; 2nd accepted; 3rd accepted (the 'up to 3' edge); 4th rejected with a clear message. Interaction: a 3rd top-up of 500 - count *and* amount boundaries stack; expect acceptance if rules are independent (and raise it if the spec is silent on cumulative daily *amounts* - a genuine gap).\n\n**The missable boundary - the day rollover**: does 'per day' reset at midnight (which timezone?), on a 24-hour rolling window, or per banking day? Tests: top-up 3 at 23:59, then 1 more at 00:01 - accepted or rejected? The spec does not say. That is a requirement question AND a test.\n\n**Technique labels**: amount set = 3-value BVA (boundaries with both neighbours); count = BVA on an ordinal (1,2,3,4); day rollover = boundary in the time dimension, found by questioning the rule, not by staring at numbers.",
     rubric: [
       "Includes 9/10/11 and 499/500/501 with the euro step recognised (no 10.01-style values)",
       "Covers invalid non-integer/format inputs",

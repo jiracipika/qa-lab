@@ -39,7 +39,7 @@ export function GamesPage() {
         <div className="grid2">
           <div className="card">
             <h2>Boundary Hunter</h2>
-            <p className="muted small">Given a field's valid range, pick the values the technique needs. Learn 2-point, 3-point, and robust sets.</p>
+            <p className="muted small">Given a field's valid range, pick the values the technique needs. Learn the ISTQB 2-value and 3-value BVA sets.</p>
             <div className="row">
               <span className="chip">best {state.games.boundaryBest} pts</span>
               <Link className="btn btn-primary" to="/games/boundary">Play</Link>
@@ -228,10 +228,9 @@ function classLabelsForResult(spec: BoundarySpecAlias, v: number, result: Bounda
 }
 type BoundarySpecAlias = { step: number };
 
-function techniqueHint(t: "2-point" | "3-point" | "robust"): string {
-  if (t === "2-point") return "exactly the two boundary values";
-  if (t === "3-point") return "min, min+, a mid value, max-, max";
-  return "the 3-point set plus invalid neighbours just outside";
+function techniqueHint(t: "2-value" | "3-value"): string {
+  if (t === "2-value") return "each boundary value plus its closest neighbour in the adjacent partition (min-1, min, max, max+1)";
+  return "each boundary value plus both its neighbours (min-1, min, min+1, max-1, max, max+1)";
 }
 
 /* ================= Defect Detective ================= */

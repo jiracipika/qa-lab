@@ -249,7 +249,7 @@ export const roadmap: RoadmapItem[] = [
     tools: ["REST Assured", "Postman", "Bruno"],
   },
   {
-    id: "rm-perf",
+    id: "rm-perf-a11y-sec",
     title: "Performance, accessibility, and security fundamentals",
     blurb: "Load/stress/soak concepts, performance budgets and metrics (P95, throughput), accessibility testing (WCAG basics, axe, keyboard/screen reader), security testing basics for testers (OWASP top 10 awareness).",
     tracks: ["Manual testing", "Automation", "Banking QA"],
@@ -355,7 +355,7 @@ export const testCaseCards: TestCaseCard[] = [
     testData: ["Full account extract, both systems"],
     steps: ["Run record-count comparison", "Run sum-of-balances checksum per account type", "Extract all mismatched rows and classify"],
     expected: "Counts equal; checksums equal per account type; any mismatch list is empty or explained (e.g., known decimal-precision notes).",
-    classification: "boundary",
+    classification: "positive",
     topic: "Maintenance",
   },
   {

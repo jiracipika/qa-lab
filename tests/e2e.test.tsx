@@ -63,15 +63,15 @@ describe("learner journey", () => {
     await user.click(good);
     expect(await screen.findByText(/1 reviewed this session/)).toBeInTheDocument();
 
-    // 5. Play a minigame round (Boundary Hunter, round 1 = 3-point BVA)
+    // 5. Play a minigame round (Boundary Hunter, round 1 = 3-value BVA)
     await user.click(screen.getByRole("link", { name: "Minigames" }));
     await user.click((await screen.findAllByRole("link", { name: "Play" }))[0]);
-    // Select the complete 3-point set for 1.00-10,000.00: 1.00, 1.01, 5000.50, 9999.99, 10000.00
-    for (const v of ["1.00", "1.01", "5000.50", "9999.99", "10000.00"]) {
+    // Select the complete 3-value set for 1.00-10,000.00: 0.99, 1.00, 1.01, 9999.99, 10000.00, 10000.01
+    for (const v of ["0.99", "1.00", "1.01", "9999.99", "10000.00", "10000.01"]) {
       await user.click(screen.getByRole("button", { name: new RegExp(`^${v.replace(".", "\\.")}$`) }));
     }
     await user.click(screen.getByRole("button", { name: /Submit values/ }));
-    expect(await screen.findByText(/5\/5 points/)).toBeInTheDocument();
+    expect(await screen.findByText(/6\/6 points/)).toBeInTheDocument();
     expect(screen.getByText(/Complete set - nothing missed/)).toBeInTheDocument();
 
     // 6. Sandbox: log in, make a transfer, observe the planted confirmation defect, file a report

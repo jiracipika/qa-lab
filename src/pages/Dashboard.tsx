@@ -53,7 +53,7 @@ export function Dashboard() {
       <div className="hero-card">
         <div className="row between" style={{ marginBottom: 6 }}>
           <span className="eyebrow" style={{ marginBottom: 0 }}>{isNew ? "Start here" : "Continue learning"}</span>
-          {next && <span className="chip">Module {next.module.letter} - {next.module.title}</span>}
+          {next && <span className="chip chip-accent">Module {next.module.letter} - {next.module.title}</span>}
         </div>
         {next ? (
           <>
@@ -83,7 +83,7 @@ export function Dashboard() {
 
       <div className="grid2" style={{ marginBottom: 16 }}>
         {/* Review */}
-        <div className="card">
+        <div className="card action-card">
           <h2>Cards due for review</h2>
           {due.length > 0 ? (
             <>
@@ -100,28 +100,28 @@ export function Dashboard() {
         </div>
 
         {/* Daily challenge */}
-        <div className="card">
+        <div className="card action-card">
           <h2>Daily challenge</h2>
           {challenge && (
             <>
               <p style={{ margin: "0 0 6px" }}>
                 <strong>{challenge.title}</strong>
               </p>
-              <p className="muted small" style={{ margin: "0 0 10px" }}>
+              <p className="small" style={{ margin: "0 0 10px" }}>
                 {challenge.kind.replace("-", " ")} - {challenge.minutes} min. Rotates every day.
               </p>
-              <Link to={`/challenges/${challenge.id}`} className="btn">Attempt it</Link>
+              <Link to={`/challenges/${challenge.id}`} className="btn btn-primary">Attempt it</Link>
             </>
           )}
         </div>
 
         {/* Mistakes */}
-        <div className="card">
+        <div className="card action-card">
           <h2>Mistake notebook</h2>
           {openMistakes.length > 0 ? (
             <>
               <p className="muted" style={{ margin: "0 0 10px" }}>{openMistakes.length} unanswered question{openMistakes.length === 1 ? "" : "s"} from quizzes you got wrong.</p>
-              <Link to="/tools?tab=mistakes" className="btn">Revisit mistakes</Link>
+              <Link to="/tools?tab=mistakes" className="btn btn-primary">Revisit mistakes</Link>
             </>
           ) : (
             <EmptyState title="No open mistakes">
@@ -143,7 +143,7 @@ export function Dashboard() {
         </p>
         <RangeLab />
         <HandNote>
-          the interesting bugs live at the edges - test 17, 18, 19 and 64, 65, 66, not just the middle
+          the interesting bugs live at the edges - the 2-value set is 17, 18, 65, 66; the 3-value adds 19 and 64
         </HandNote>
       </div>
 

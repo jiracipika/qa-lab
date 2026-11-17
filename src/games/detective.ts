@@ -65,7 +65,7 @@ export const detectiveScenes: DetectiveScene[] = [
         text: "All characters count towards the length, including spaces.",
         hasDefect: true,
         defectTitle: "Leading/trailing spaces dropped before length check",
-        explanation: "The widget trims input first: '  Sandbox1  ' (11 chars) is treated as 8 - and worse, a password that is only valid because of its spaces fails. Length rules must count exactly what the spec counts.",
+        explanation: "The widget trims input first: '  Sandbox1  ' (12 chars) is treated as 8 - and worse, a password that is only valid because of its spaces fails. Length rules must count exactly what the spec counts.",
       },
     ],
   },
