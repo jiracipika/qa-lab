@@ -3,6 +3,31 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.7 "Glossary Match minigame" - 2026-11-17)
+
+- **New fourth minigame: Glossary Match** (`/games/matcher`), rebuilt in-app from the
+  user's standalone "ISTQB glossary" HTML matching game (60 term/definition pairs,
+  restyled to the workbook design language instead of the original flat styling):
+  - `src/games/matcher.ts`: pure engine - 60 CTFL 4.0 pairs (wording lightly aligned
+    to the syllabus), `drawRound` draws 6 pairs per round without replacement, and the
+    deck only reshuffles after all 60 are matched; `matchAccuracy` scores matched vs
+    wrong attempts. Unit-tested (uniqueness, no-replacement drain over exactly 10
+    rounds, accuracy math).
+  - UI in Games.tsx: terms column (3px blue left accent bar as the role cue) vs
+    definitions column, selected = blue border + tint (no glow - reserved for primary
+    CTAs), matched = green + checkmark + disabled, wrong = red flash + shake
+    (killed by reduced-motion), round-complete card with Next round / Reshuffle,
+    progress chips (deck to go, round, accuracy), hand-written retrieval tip.
+    Board stacks to one column under 700px. Cards are real buttons with aria-pressed.
+  - Fix during bring-up: a wrong pair initially flashed 4 cards because both columns
+    of a pair share the pair id - wrong selection is now tracked per column.
+  - `gameSession` union extended with "matcher" (sessions log accuracy; hub card
+    shows best session accuracy). Additive state change, no migration needed.
+  - e2e ROUTES gains /games/matcher.
+- Verified: vitest 69/69, tsc clean, build ok, Playwright 9 passed/1 skipped.
+  Browser play-through: wrong-pair shake (exactly two cards), correct match, full
+  round completion, next-round draw, light + dark themes.
+
 ## Completed (release 1.6 "ISTQB BVA correctness + answer audit + polish" - 2026-11-17)
 
 - **BVA migrated to the ISTQB CTFL 4.0 convention** (the old content taught the pre-4.0

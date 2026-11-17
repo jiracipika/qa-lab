@@ -6,7 +6,7 @@
 
 import { expect, test, type Page } from "@playwright/test";
 
-const ROUTES = ["/", "/modules", "/modules/mod-f", "/modules/mod-e/lessons/e-l1", "/review", "/quizzes", "/challenges", "/games", "/sandbox", "/glossary", "/tools", "/roadmap", "/settings"];
+const ROUTES = ["/", "/modules", "/modules/mod-f", "/modules/mod-e/lessons/e-l1", "/review", "/quizzes", "/challenges", "/games", "/games/matcher", "/sandbox", "/glossary", "/tools", "/roadmap", "/settings"];
 
 /** Collect page errors + console errors for a page's life; assert none at the end. */
 function watchErrors(page: Page): () => Promise<void> {

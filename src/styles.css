@@ -637,6 +637,37 @@ table.data tr:last-child td { border-bottom: none; }
 .rangelab-set { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-soft); background: var(--bg-inset); border: 1px solid var(--border); border-radius: 7px; padding: 3px 10px; }
 .rangelab-set strong { font-family: var(--font-sans); color: var(--accent-strong); margin-right: 6px; }
 
+/* Glossary Match: terms <-> definitions board */
+.match-board { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 16px; align-items: start; }
+.match-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.match-col-title { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 2px; color: var(--ink-soft); }
+.match-card {
+  text-align: left; width: 100%; cursor: pointer;
+  background: var(--bg-raised); color: var(--ink-soft);
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 14px; font-size: 0.92rem; line-height: 1.45;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.match-card:hover:not(:disabled) { border-color: var(--ink-soft); box-shadow: var(--shadow-lift); }
+.match-card.selected { border-color: var(--accent); border-width: 2px; background: var(--accent-soft); color: var(--ink); }
+.match-card.matched { border-color: var(--ok); background: var(--ok-soft); color: var(--ink-soft); opacity: 0.72; cursor: default; }
+.match-card.matched::after { content: " \2713"; color: var(--ok); font-weight: 800; }
+.match-card.wrong { border-color: var(--bad); background: var(--bad-soft); animation: match-shake 0.4s ease; }
+.match-def { font-size: 0.88rem; }
+/* term cards carry a left accent bar: a quiet role cue that this side is the anchor */
+.match-card:not(.match-def) { border-left: 3px solid var(--accent); }
+.match-card:not(.match-def).matched { border-left-color: var(--ok); }
+.match-card:not(.match-def).wrong { border-left-color: var(--bad); }
+@keyframes match-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+}
+@media (max-width: 700px) {
+  .match-board { grid-template-columns: 1fr; }
+}
+
 /* destructive actions get their own visually separated zone */
 .danger-zone { border: 1.5px dashed var(--bad-line); background: var(--bad-soft); }
 .danger-zone h2 { color: var(--bad); }

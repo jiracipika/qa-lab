@@ -109,7 +109,7 @@ export interface WorkspaceTestCase {
 
 export interface GameSession {
   at: string;
-  game: "boundary" | "detective" | "sorter";
+  game: "boundary" | "detective" | "sorter" | "matcher";
   score: number;
 }
 

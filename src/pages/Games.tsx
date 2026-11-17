@@ -13,6 +13,12 @@ import {
 } from "../games/boundary";
 import { bucketLabels, evaluateSort, sortItems, type SortBucket } from "../games/sorter";
 import {
+  drawRound,
+  glossaryPairs,
+  matchAccuracy,
+  type MatchRound,
+} from "../games/matcher";
+import {
   detectiveScenes,
   fileFinding,
   filterTxns,
@@ -61,6 +67,14 @@ export function GamesPage() {
               <Link className="btn btn-primary" to="/games/sorter">Play</Link>
             </div>
           </div>
+          <div className="card">
+            <h2>Glossary Match</h2>
+            <p className="muted small">Pair {glossaryPairs.length} ISTQB terms with their definitions. No repeats until the whole deck is matched.</p>
+            <div className="row">
+              <span className="chip">best accuracy {matcherBest(state)}%</span>
+              <Link className="btn btn-primary" to="/games/matcher">Play</Link>
+            </div>
+          </div>
         </div>
         <p className="small muted" style={{ marginTop: 14 }}>
           Future games planned: severity vs priority triage, regression selection, state transition puzzles, API response diagnosis, flakiness investigation. See the <Link to="/roadmap">roadmap</Link>.
@@ -77,7 +91,154 @@ export function GamesPage() {
       {gameId === "boundary" && <BoundaryHunter />}
       {gameId === "detective" && <DefectDetective />}
       {gameId === "sorter" && <TestDesignSorter />}
-      {!["boundary", "detective", "sorter"].includes(gameId) && <EmptyState title="Unknown game">Back to <Link to="/games">minigames</Link>.</EmptyState>}
+      {gameId === "matcher" && <GlossaryMatch />}
+      {!["boundary", "detective", "sorter", "matcher"].includes(gameId) && <EmptyState title="Unknown game">Back to <Link to="/games">minigames</Link>.</EmptyState>}
+    </div>
+  );
+}
+
+/** Best matcher accuracy (0-100) recorded across game sessions, or 100 when never played (no penalty for a first visit). */
+function matcherBest(state: { games: { sessions: { game: string; score: number }[] } }): number {
+  const scores = state.games.sessions.filter((s) => s.game === "matcher").map((s) => s.score);
+  return scores.length ? Math.max(...scores) : 100;
+}
+
+/* ================= Glossary Match ================= */
+
+function GlossaryMatch() {
+  const { dispatch } = useStore();
+  const [deck, setDeck] = useState<{ round: MatchRound; remaining: typeof glossaryPairs }>(() => drawRound(glossaryPairs, 6));
+  const [matchedIds, setMatchedIds] = useState<string[]>([]);
+  const [selTerm, setSelTerm] = useState<string | null>(null);
+  const [selDef, setSelDef] = useState<string | null>(null);
+  const [wrongSel, setWrongSel] = useState<{ term: string; def: string } | null>(null);
+  const [sessionMatched, setSessionMatched] = useState(0);
+  const [sessionWrong, setSessionWrong] = useState(0);
+  const [reshuffled, setReshuffled] = useState(false);
+
+  const round = deck.round;
+  const roundComplete = matchedIds.length === round.pairs.length;
+
+  const pick = (kind: "term" | "def", id: string) => {
+    if (wrongSel || matchedIds.includes(id)) return;
+    const term = kind === "term" ? id : selTerm;
+    const def = kind === "def" ? id : selDef;
+    if (kind === "term") setSelTerm(id);
+    else setSelDef(id);
+    if (term && def) {
+      if (term === def) {
+        const nextMatched = [...matchedIds, id];
+        setMatchedIds(nextMatched);
+        setSelTerm(null);
+        setSelDef(null);
+        setSessionMatched((n) => n + 1);
+        if (nextMatched.length === round.pairs.length) {
+          // round done: record accuracy over everything attempted this session
+          const wrongNow = sessionWrong;
+          dispatch({ type: "gameSession", game: "matcher", score: matchAccuracy(sessionMatched + 1, wrongNow) });
+        }
+      } else {
+        setSessionWrong((n) => n + 1);
+        // flash only the two clicked cards: track the wrong pick per column, since
+        // a pair id names both a term card and a definition card
+        setWrongSel(kind === "term" ? { term: id, def: selDef! } : { term: selTerm!, def: id });
+        window.setTimeout(() => {
+          setWrongSel(null);
+          setSelTerm(null);
+          setSelDef(null);
+        }, 550);
+      }
+    }
+  };
+
+  const nextRound = () => {
+    if (deck.remaining.length === 0) {
+      // deck mastered: reshuffle all pairs and start a fresh run
+      setReshuffled(true);
+      setSessionMatched(0);
+      setSessionWrong(0);
+      setDeck(drawRound(glossaryPairs, 6));
+    } else {
+      setDeck(drawRound(deck.remaining, 6));
+    }
+    setMatchedIds([]);
+    setSelTerm(null);
+    setSelDef(null);
+    setWrongSel(null);
+  };
+
+  return (
+    <div>
+      <div className="page-head">
+        <h1>Glossary Match</h1>
+        <p className="lede">
+          Select a term on the left, then its definition on the right. Wrong pairs shake and cost accuracy - the deck
+          only reshuffles after every one of the {glossaryPairs.length} terms has been matched.
+        </p>
+      </div>
+      <div className="row" style={{ marginBottom: 12, flexWrap: "wrap" }}>
+        <span className="chip chip-accent">deck {deck.remaining.length + (round.pairs.length - matchedIds.length)} to go</span>
+        <span className="chip">round {matchedIds.length}/{round.pairs.length}</span>
+        <span className="chip">accuracy {matchAccuracy(sessionMatched, sessionWrong)}%</span>
+        {reshuffled && <span className="chip chip-ok">deck mastered - full reshuffle</span>}
+      </div>
+      <div className="match-board" style={roundComplete ? undefined : { marginBottom: 14 }}>
+        <div className="match-col" aria-label="Terms">
+          <h2 className="match-col-title">Terms</h2>
+          {round.termOrder.map((i) => {
+            const p = round.pairs[i];
+            const matched = matchedIds.includes(p.id);
+            return (
+              <button
+                key={p.id}
+                type="button"
+                className={`match-card${matched ? " matched" : selTerm === p.id ? " selected" : ""}${wrongSel?.term === p.id ? " wrong" : ""}`}
+                aria-pressed={selTerm === p.id}
+                disabled={matched}
+                onClick={() => pick("term", p.id)}
+              >
+                {p.term}
+              </button>
+            );
+          })}
+        </div>
+        <div className="match-col" aria-label="Definitions">
+          <h2 className="match-col-title">Definitions</h2>
+          {round.defOrder.map((i) => {
+            const p = round.pairs[i];
+            const matched = matchedIds.includes(p.id);
+            return (
+              <button
+                key={p.id}
+                type="button"
+                className={`match-card match-def${matched ? " matched" : selDef === p.id ? " selected" : ""}${wrongSel?.def === p.id ? " wrong" : ""}`}
+                aria-pressed={selDef === p.id}
+                disabled={matched}
+                onClick={() => pick("def", p.id)}
+              >
+                {p.def}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {roundComplete ? (
+        <div className="card fade-in" style={{ marginBottom: 14 }}>
+          <h2>Round complete</h2>
+          <p className="muted" style={{ margin: "0 0 10px" }}>
+            {deck.remaining.length === 0
+              ? "That was the last of the deck - all " + glossaryPairs.length + " terms matched. The next round reshuffles everything."
+              : deck.remaining.length + " terms left in the deck."}
+          </p>
+          <button type="button" className="btn btn-primary" onClick={nextRound}>
+            {deck.remaining.length === 0 ? "Reshuffle the deck" : "Next round"}
+          </button>
+        </div>
+      ) : (
+        <p className="hand-note" style={{ margin: "0 0 14px" }}>
+          say the definition out loud before you click - retrieval beats recognition
+        </p>
+      )}
     </div>
   );
 }

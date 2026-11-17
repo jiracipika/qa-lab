@@ -35,7 +35,7 @@ export type Action =
   | { type: "addSandboxReport"; report: Omit<SandboxReport, "id" | "at"> }
   | { type: "deleteSandboxReport"; id: string }
   | { type: "revealSolution"; key: string }
-  | { type: "gameSession"; game: "boundary" | "detective" | "sorter"; score: number; best?: "boundaryBest" | "sorterBest" }
+  | { type: "gameSession"; game: "boundary" | "detective" | "sorter" | "matcher"; score: number; best?: "boundaryBest" | "sorterBest" }
   | { type: "detectiveFound"; defectId: string }
   | { type: "addWorkspaceCase"; testCase: Omit<WorkspaceTestCase, "id" | "createdAt"> }
   | { type: "deleteWorkspaceCase"; id: string }

@@ -9,6 +9,7 @@ import {
   valueForClass,
 } from "../src/games/boundary";
 import { bucketLabels, evaluateSort, sortItems } from "../src/games/sorter";
+import { drawRound, glossaryPairs, matchAccuracy } from "../src/games/matcher";
 import { detectiveScenes, fileFinding, filterTxns, passwordCheck, shopDiscount } from "../src/games/detective";
 import { addPayee, history, initialBank, login, sandboxDefects, transfer } from "../src/sandbox/engine";
 
@@ -69,6 +70,45 @@ describe("Boundary Hunter", () => {
         expect(round.candidates).toContain(target);
       }
     }
+  });
+});
+
+describe("Glossary Match", () => {
+  it("has 60 unique pairs with substantial definitions", () => {
+    expect(glossaryPairs.length).toBe(60);
+    expect(new Set(glossaryPairs.map((p) => p.id)).size).toBe(60);
+    expect(new Set(glossaryPairs.map((p) => p.term.toLowerCase())).size).toBe(60);
+    for (const p of glossaryPairs) {
+      expect(p.def.length).toBeGreaterThan(20);
+    }
+  });
+
+  it("draws rounds without replacement until the pool drains, then reshuffles", () => {
+    // deterministic rng: constant sequence still exercises the no-replacement invariant
+    let pool = glossaryPairs;
+    const seen: string[] = [];
+    let rounds = 0;
+    while (pool.length > 0) {
+      const { round, remaining } = drawRound(pool, 6);
+      rounds++;
+      expect(round.pairs.length).toBe(Math.min(6, pool.length));
+      // every pair id appears exactly once in each column's order
+      expect(new Set(round.termOrder)).toEqual(new Set(round.pairs.map((_, i) => i)));
+      expect(new Set(round.defOrder)).toEqual(new Set(round.pairs.map((_, i) => i)));
+      seen.push(...round.pairs.map((p) => p.id));
+      pool = remaining;
+    }
+    expect(rounds).toBe(10); // 60 pairs / 6 per round
+    expect(new Set(seen).size).toBe(60);
+    // a fresh draw from the full pool works again (reshuffle after mastery)
+    expect(drawRound(glossaryPairs, 6).round.pairs.length).toBe(6);
+  });
+
+  it("accuracy counts matched pairs against wrong attempts", () => {
+    expect(matchAccuracy(0, 0)).toBe(100);
+    expect(matchAccuracy(6, 0)).toBe(100);
+    expect(matchAccuracy(6, 2)).toBe(75);
+    expect(matchAccuracy(3, 3)).toBe(50);
   });
 });
 
