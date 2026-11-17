@@ -30,6 +30,17 @@ export function loadState(): { state: AppState; recovered: boolean; error?: stri
   }
 }
 
+/** Shape check for the persisted Glossary Match session (deep fields validated by fromSession at use time). */
+function isMatcherSession(m: unknown): boolean {
+  if (typeof m !== "object" || m === null) return false;
+  const x = m as Record<string, unknown>;
+  return (
+    Array.isArray(x.remainingIds) && Array.isArray(x.roundPairIds) &&
+    Array.isArray(x.termOrder) && Array.isArray(x.defOrder) && Array.isArray(x.matchedIds) &&
+    typeof x.sessionMatched === "number" && typeof x.sessionWrong === "number" && typeof x.reshuffled === "boolean"
+  );
+}
+
 /** Fill any missing fields so older/partial states keep working. Invalid values are dropped. */
 export function sanitizeState(input: unknown): AppState {
   const base = defaultState();
@@ -52,6 +63,7 @@ export function sanitizeState(input: unknown): AppState {
     sorterBest: typeof s.games?.sorterBest === "number" ? s.games.sorterBest : 0,
     detectiveFound: Array.isArray(s.games?.detectiveFound) ? s.games!.detectiveFound : [],
     sessions: Array.isArray(s.games?.sessions) ? s.games!.sessions : [],
+    matcher: isMatcherSession(s.games?.matcher) ? s.games!.matcher : null,
   };
   for (const key of ["lessons", "challenges", "cards", "testRuns", "revealedSolutions"] as const) {
     if (typeof s[key] !== "object" || s[key] === null || Array.isArray(s[key])) {

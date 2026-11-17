@@ -9,7 +9,7 @@ import {
   valueForClass,
 } from "../src/games/boundary";
 import { bucketLabels, evaluateSort, sortItems } from "../src/games/sorter";
-import { drawRound, glossaryPairs, matchAccuracy } from "../src/games/matcher";
+import { drawRound, fromMatcherSession, glossaryPairs, matchAccuracy, toMatcherSession } from "../src/games/matcher";
 import { detectiveScenes, fileFinding, filterTxns, passwordCheck, shopDiscount } from "../src/games/detective";
 import { addPayee, history, initialBank, login, sandboxDefects, transfer } from "../src/sandbox/engine";
 
@@ -109,6 +109,32 @@ describe("Glossary Match", () => {
     expect(matchAccuracy(6, 0)).toBe(100);
     expect(matchAccuracy(6, 2)).toBe(75);
     expect(matchAccuracy(3, 3)).toBe(50);
+  });
+
+  it("session round-trips: saved deck and round restore exactly (progress survives navigation/reload)", () => {
+    const { round, remaining } = drawRound(glossaryPairs, 6);
+    const matchedIds = round.pairs.slice(0, 3).map((p) => p.id);
+    const session = toMatcherSession(round, remaining, matchedIds, 9, 2, false);
+    const restored = fromMatcherSession(session);
+    expect(restored).not.toBeNull();
+    expect(restored!.round.pairs.map((p) => p.id)).toEqual(session.roundPairIds);
+    expect(restored!.round.termOrder).toEqual(session.termOrder);
+    expect(restored!.round.defOrder).toEqual(session.defOrder);
+    expect(restored!.remaining.map((p) => p.id)).toEqual(session.remainingIds);
+  });
+
+  it("session restore rejects corrupt data instead of rendering a broken board", () => {
+    expect(fromMatcherSession(null)).toBeNull();
+    expect(fromMatcherSession(undefined)).toBeNull();
+    const { round, remaining } = drawRound(glossaryPairs, 6);
+    const good = toMatcherSession(round, remaining, [], 0, 0, false);
+    // unknown pair id
+    expect(fromMatcherSession({ ...good, roundPairIds: ["g01", "nope", ...good.roundPairIds.slice(2)] })).toBeNull();
+    // order not a permutation of the round
+    expect(fromMatcherSession({ ...good, termOrder: [0, 0, 0, 0, 0, 0] })).toBeNull();
+    expect(fromMatcherSession({ ...good, termOrder: [0, 1, 2, 3, 4] })).toBeNull();
+    // matched id outside the known pairs
+    expect(fromMatcherSession({ ...good, matchedIds: ["bogus"] })).toBeNull();
   });
 });
 

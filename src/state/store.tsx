@@ -36,6 +36,7 @@ export type Action =
   | { type: "deleteSandboxReport"; id: string }
   | { type: "revealSolution"; key: string }
   | { type: "gameSession"; game: "boundary" | "detective" | "sorter" | "matcher"; score: number; best?: "boundaryBest" | "sorterBest" }
+  | { type: "matcherSave"; session: import("../types/state").MatcherSession | null }
   | { type: "detectiveFound"; defectId: string }
   | { type: "addWorkspaceCase"; testCase: Omit<WorkspaceTestCase, "id" | "createdAt"> }
   | { type: "deleteWorkspaceCase"; id: string }
@@ -185,6 +186,8 @@ export function reducer(state: AppState, action: Action): AppState {
       };
     case "detectiveFound":
       return { ...state, games: { ...state.games, detectiveFound: [...new Set([...state.games.detectiveFound, action.defectId])] } };
+    case "matcherSave":
+      return { ...state, games: { ...state.games, matcher: action.session } };
     case "addWorkspaceCase":
       return {
         ...state,

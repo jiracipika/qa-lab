@@ -581,6 +581,8 @@ table.data tr:last-child td { border-bottom: none; }
 .muted { color: var(--muted); }
 .small { font-size: 0.85rem; }
 .hand-note { font-family: var(--font-hand); font-size: 1.22rem; line-height: 1.35; color: var(--muted); }
+/* the thin script face needs more luminance against midnight ink than body muted text */
+[data-theme="dark"] .hand-note { color: var(--ink-soft); }
 .hand-note b, .hand-note strong { color: var(--ink-soft); }
 .visually-hidden {
   position: absolute; width: 1px; height: 1px;

@@ -3,6 +3,19 @@
 Working state for AI sessions and contributors. Update after each milestone.
 Design contract: DESIGN.md (paper/ink/blue workbook system, MedBrewery-family language).
 
+## Completed (release 1.7.1 "matcher progress persists + dark hand-note" - 2026-11-17)
+
+- **Glossary Match progress now survives navigation and reloads**: the round,
+  remaining deck, matched pairs, and session accuracy live in the store
+  (`GameState.matcher: MatcherSession | null`, `matcherSave` action, sanitized on
+  load; corrupt saved sessions fall back to a fresh draw instead of a broken board).
+  Unit tests cover the session round-trip and rejection of corrupt data; verified in
+  browser across navigate-away/back and full reload.
+- Reported "dark on dark text": audited every route + card state (selected/matched/
+  wrong, opacity folded in) in dark theme - all text >= 4.5:1; the screenshot that
+  prompted it was captured mid-rendering glitch. One real improvement applied anyway:
+  the thin Caveat hand-note now uses ink-soft in dark theme (was muted).
+
 ## Completed (release 1.7 "Glossary Match minigame" - 2026-11-17)
 
 - **New fourth minigame: Glossary Match** (`/games/matcher`), rebuilt in-app from the

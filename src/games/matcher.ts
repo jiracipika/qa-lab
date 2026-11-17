@@ -107,3 +107,54 @@ export function matchAccuracy(matched: number, wrong: number): number {
   const attempts = matched + wrong;
   return attempts === 0 ? 100 : Math.round((matched / attempts) * 100);
 }
+
+/* ---- Session persistence: the deck survives navigation and reloads ---- */
+
+export interface MatcherSessionData {
+  remainingIds: string[];
+  roundPairIds: string[];
+  termOrder: number[];
+  defOrder: number[];
+  matchedIds: string[];
+  sessionMatched: number;
+  sessionWrong: number;
+  reshuffled: boolean;
+}
+
+export function toMatcherSession(
+  round: MatchRound,
+  remaining: GlossaryPair[],
+  matchedIds: string[],
+  sessionMatched: number,
+  sessionWrong: number,
+  reshuffled: boolean,
+): MatcherSessionData {
+  return {
+    remainingIds: remaining.map((p) => p.id),
+    roundPairIds: round.pairs.map((p) => p.id),
+    termOrder: round.termOrder,
+    defOrder: round.defOrder,
+    matchedIds,
+    sessionMatched,
+    sessionWrong,
+    reshuffled,
+  };
+}
+
+/** Rehydrate a saved session. Returns null when the data does not map onto the
+ *  current pair set (unknown ids, broken orders) so the caller can draw fresh. */
+export function fromMatcherSession(data: MatcherSessionData | null | undefined): { round: MatchRound; remaining: GlossaryPair[] } | null {
+  if (!data) return null;
+  const byId = new Map(glossaryPairs.map((p) => [p.id, p]));
+  const pairs = data.roundPairIds.map((id) => byId.get(id));
+  const remaining = data.remainingIds.map((id) => byId.get(id));
+  if (pairs.some((p) => !p) || remaining.some((p) => !p)) return null;
+  const n = pairs.length;
+  const isPerm = (arr: number[]) => Array.isArray(arr) && arr.length === n && new Set(arr).size === n && arr.every((v) => Number.isInteger(v) && v >= 0 && v < n);
+  if (!isPerm(data.termOrder) || !isPerm(data.defOrder)) return null;
+  if (!Array.isArray(data.matchedIds) || data.matchedIds.some((id) => !byId.has(id))) return null;
+  return {
+    round: { pairs: pairs as GlossaryPair[], termOrder: data.termOrder, defOrder: data.defOrder },
+    remaining: remaining as GlossaryPair[],
+  };
+}

@@ -113,11 +113,24 @@ export interface GameSession {
   score: number;
 }
 
+/** Serializable Glossary Match progress: survives navigation and reloads. */
+export interface MatcherSession {
+  remainingIds: string[]; // deck pool after the current round was drawn
+  roundPairIds: string[]; // pairs in the current round (termOrder/defOrder index into this)
+  termOrder: number[];
+  defOrder: number[];
+  matchedIds: string[]; // pairs matched within the current round
+  sessionMatched: number;
+  sessionWrong: number;
+  reshuffled: boolean;
+}
+
 export interface GameState {
   boundaryBest: number;
   sorterBest: number;
   detectiveFound: string[]; // defect ids confirmed with evidence
   sessions: GameSession[];
+  matcher: MatcherSession | null;
 }
 
 export interface ActivityEntry {
@@ -174,7 +187,7 @@ export function defaultState(now = new Date()): AppState {
     bookmarks: [],
     sandboxReports: [],
     workspace: { testCases: [] },
-    games: { boundaryBest: 0, sorterBest: 0, detectiveFound: [], sessions: [] },
+    games: { boundaryBest: 0, sorterBest: 0, detectiveFound: [], sessions: [], matcher: null },
     activity: [],
     testRuns: {},
     revealedSolutions: {},

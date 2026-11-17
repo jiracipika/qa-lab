@@ -14,8 +14,10 @@ import {
 import { bucketLabels, evaluateSort, sortItems, type SortBucket } from "../games/sorter";
 import {
   drawRound,
+  fromMatcherSession,
   glossaryPairs,
   matchAccuracy,
+  toMatcherSession,
   type MatchRound,
 } from "../games/matcher";
 import {
@@ -106,18 +108,46 @@ function matcherBest(state: { games: { sessions: { game: string; score: number }
 /* ================= Glossary Match ================= */
 
 function GlossaryMatch() {
-  const { dispatch } = useStore();
-  const [deck, setDeck] = useState<{ round: MatchRound; remaining: typeof glossaryPairs }>(() => drawRound(glossaryPairs, 6));
-  const [matchedIds, setMatchedIds] = useState<string[]>([]);
+  const { state, dispatch } = useStore();
+  // The deck lives in the app store: navigating away (or reloading) keeps the round,
+  // the remaining pool, and the accuracy stats exactly where they were.
+  const [deck, setDeck] = useState<{ round: MatchRound; remaining: typeof glossaryPairs }>(() => {
+    const saved = fromMatcherSession(state.games.matcher);
+    if (saved) return saved;
+    const fresh = drawRound(glossaryPairs, 6);
+    return fresh;
+  });
+  const [matchedIds, setMatchedIds] = useState<string[]>(() => state.games.matcher?.matchedIds ?? []);
   const [selTerm, setSelTerm] = useState<string | null>(null);
   const [selDef, setSelDef] = useState<string | null>(null);
   const [wrongSel, setWrongSel] = useState<{ term: string; def: string } | null>(null);
-  const [sessionMatched, setSessionMatched] = useState(0);
-  const [sessionWrong, setSessionWrong] = useState(0);
-  const [reshuffled, setReshuffled] = useState(false);
+  const [sessionMatched, setSessionMatched] = useState(() => state.games.matcher?.sessionMatched ?? 0);
+  const [sessionWrong, setSessionWrong] = useState(() => state.games.matcher?.sessionWrong ?? 0);
+  const [reshuffled, setReshuffled] = useState(() => state.games.matcher?.reshuffled ?? false);
 
   const round = deck.round;
   const roundComplete = matchedIds.length === round.pairs.length;
+
+  const persist = (next: {
+    deck?: { round: MatchRound; remaining: typeof glossaryPairs };
+    matchedIds?: string[];
+    sessionMatched?: number;
+    sessionWrong?: number;
+    reshuffled?: boolean;
+  }) => {
+    const d = next.deck ?? deck;
+    dispatch({
+      type: "matcherSave",
+      session: toMatcherSession(
+        d.round,
+        d.remaining,
+        next.matchedIds ?? matchedIds,
+        next.sessionMatched ?? sessionMatched,
+        next.sessionWrong ?? sessionWrong,
+        next.reshuffled ?? reshuffled,
+      ),
+    });
+  };
 
   const pick = (kind: "term" | "def", id: string) => {
     if (wrongSel || matchedIds.includes(id)) return;
@@ -128,17 +158,20 @@ function GlossaryMatch() {
     if (term && def) {
       if (term === def) {
         const nextMatched = [...matchedIds, id];
+        const nextMatchedCount = sessionMatched + 1;
         setMatchedIds(nextMatched);
         setSelTerm(null);
         setSelDef(null);
-        setSessionMatched((n) => n + 1);
+        setSessionMatched(nextMatchedCount);
+        persist({ matchedIds: nextMatched, sessionMatched: nextMatchedCount });
         if (nextMatched.length === round.pairs.length) {
           // round done: record accuracy over everything attempted this session
-          const wrongNow = sessionWrong;
-          dispatch({ type: "gameSession", game: "matcher", score: matchAccuracy(sessionMatched + 1, wrongNow) });
+          dispatch({ type: "gameSession", game: "matcher", score: matchAccuracy(nextMatchedCount, sessionWrong) });
         }
       } else {
-        setSessionWrong((n) => n + 1);
+        const nextWrong = sessionWrong + 1;
+        setSessionWrong(nextWrong);
+        persist({ sessionWrong: nextWrong });
         // flash only the two clicked cards: track the wrong pick per column, since
         // a pair id names both a term card and a definition card
         setWrongSel(kind === "term" ? { term: id, def: selDef! } : { term: selTerm!, def: id });
@@ -152,19 +185,26 @@ function GlossaryMatch() {
   };
 
   const nextRound = () => {
-    if (deck.remaining.length === 0) {
+    const fresh = deck.remaining.length === 0 ? drawRound(glossaryPairs, 6) : drawRound(deck.remaining, 6);
+    const mastered = deck.remaining.length === 0;
+    if (mastered) {
       // deck mastered: reshuffle all pairs and start a fresh run
       setReshuffled(true);
       setSessionMatched(0);
       setSessionWrong(0);
-      setDeck(drawRound(glossaryPairs, 6));
-    } else {
-      setDeck(drawRound(deck.remaining, 6));
     }
+    setDeck(fresh);
     setMatchedIds([]);
     setSelTerm(null);
     setSelDef(null);
     setWrongSel(null);
+    persist({
+      deck: fresh,
+      matchedIds: [],
+      sessionMatched: mastered ? 0 : sessionMatched,
+      sessionWrong: mastered ? 0 : sessionWrong,
+      reshuffled: mastered ? true : reshuffled,
+    });
   };
 
   return (
