@@ -10,6 +10,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import App from "../src/App";
+import { allConceptCards } from "../src/content";
 import { StoreProvider } from "../src/state/store";
 import { STORAGE_KEY } from "../src/lib/storage";
 import { exportToString, validateImport } from "../src/lib/io";
@@ -32,7 +33,7 @@ describe("learner journey", () => {
 
     // 1. Onboarding: pick a goal
     expect(screen.getByRole("dialog", { name: /Welcome to QABrew/ })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /Learn QA fundamentals/ }));
+    await user.click(screen.getByRole("radio", { name: /Learn QA fundamentals/ }));
     await user.click(screen.getByRole("button", { name: /Start: Learn QA fundamentals/ }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
@@ -114,8 +115,8 @@ describe("learner journey", () => {
     view.unmount();
     renderApp();
     await user.click(screen.getAllByRole("link", { name: /Review/ })[0]);
-    // The reviewed card is scheduled for tomorrow (rated Good): due count reflects remaining cards
-    expect(await screen.findByText(/due now/)).toBeInTheDocument();
+    // Rating a card Good takes it out of the current study queue.
+    expect(await screen.findByText(`${allConceptCards.length - 1} cards to study`)).toBeInTheDocument();
     // The card reviewed before the reload is in the schedule -> persistence survived the reload
     const scheduleRow = screen.getByText("In schedule (reviewed at least once)").closest("tr");
     expect(scheduleRow?.textContent).toMatch(/1/);

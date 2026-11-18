@@ -1,62 +1,57 @@
 /** Modules list + single module overview. */
 
+import { ArrowRight, Bookmark, Check, Clock3 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { CONTENT_NOTE, moduleById, modules } from "../content";
 import { useStore } from "../state/store";
-import { moduleLessonProgress, moduleQuizBest } from "../state/selectors";
+import { moduleLessonProgress, moduleQuizBest, nextLesson } from "../state/selectors";
 import { EmptyState, PageHead, ProgressBar } from "../components/ui";
 
 export function ModulesList() {
   const { state } = useStore();
-  const firstOpen = modules.find((m) => moduleLessonProgress(state, m.id).done < moduleLessonProgress(state, m.id).total)?.id;
+  const recommended = nextLesson(state)?.module.id;
+
   return (
     <div className="fade-in">
       <PageHead
-        eyebrow="Chapters"
         title="Learning modules"
-        lede={
-          <>
-            Three complete starter modules with lessons, flashcards, quizzes, challenges, and interactive visuals.
-            Internal course numbering - not official certification chapters.
-          </>
-        }
+        lede={`${modules.length} modules with lessons, flashcards, quizzes, and hands-on exercises.`}
       />
-      {modules.map((m) => {
-        const p = moduleLessonProgress(state, m.id);
-        const best = moduleQuizBest(state, m.id);
-        return (
-          <div className={`card module-card${m.id === firstOpen ? " sketch" : ""}`} key={m.id} style={{ marginBottom: 14 }}>
-            <span className="module-letter" aria-hidden>{m.letter}</span>
-            <div className="row between" style={{ alignItems: "flex-start" }}>
-              <div>
-                <h2 style={{ marginBottom: 4 }}>{m.letter}. {m.title}</h2>
-                <p className="muted" style={{ margin: 0 }}>{m.subtitle}</p>
+      <div className="module-grid">
+        {modules.map((module) => {
+          const progress = moduleLessonProgress(state, module.id);
+          const best = moduleQuizBest(state, module.id);
+          const suggested = module.id === recommended;
+          return (
+            <article className="module-card" data-suggested={suggested} key={module.id}>
+              <div className="module-card-header">
+                <span className="module-letter" aria-hidden>{module.letter}</span>
+                <div>
+                  <p>Module {module.letter} · <span>{module.level}</span></p>
+                  {suggested && <span className="chip chip-accent">Up next</span>}
+                </div>
               </div>
-              <span className={`chip ${m.level === "foundation" ? "chip-info" : "chip-warn"}`}>{m.level}</span>
-            </div>
-            <div className="row" style={{ margin: "12px 0" }}>
-              <span className="chip">{m.lessons.length} lessons</span>
-              <span className="chip">{m.cards.length} flashcards</span>
-              <span className="chip">{m.quiz.length} quiz questions</span>
-              <span className="chip">{m.challenges.length} challenges</span>
-              <span className="chip">~{m.minutes} min</span>
-              {best !== null && <span className="chip chip-ok">quiz best {best}%</span>}
-              {p.pct > 0 && <span className="chip chip-accent">{p.pct}% read</span>}
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <ProgressBar pct={p.pct} label={`Module ${m.letter} lesson progress`} />
-              <span className="small muted">{p.done}/{p.total} lessons completed</span>
-            </div>
-            {m.prereqIds.length > 0 && (
-              <p className="small muted" style={{ margin: "0 0 10px" }}>
-                Prerequisite: {m.prereqIds.map((id) => moduleById(id)?.title).join(", ")} - recommended, not enforced.
-              </p>
-            )}
-            <Link className="btn btn-primary" to={`/modules/${m.id}`}>Open module</Link>
-          </div>
-        );
-      })}
-      <p className="small muted">{CONTENT_NOTE}</p>
+              <h2>{module.title}</h2>
+              <p className="module-summary">{module.subtitle}</p>
+              <div className="module-facts">
+                <span>{module.lessons.length} lessons</span>
+                <span><Clock3 size={15} aria-hidden /> {module.minutes} min</span>
+                {best !== null && <span>Quiz best {best}%</span>}
+              </div>
+              <div className="module-card-footer">
+                <div className="module-card-progress">
+                  <span>{progress.done} of {progress.total} lessons complete</span>
+                  <ProgressBar pct={progress.pct} label={`Module ${module.letter} lesson progress`} />
+                </div>
+                <Link className="module-card-link" to={`/modules/${module.id}`} aria-label={`Open module ${module.letter}, ${module.title}`}>
+                  Open module <ArrowRight size={17} aria-hidden />
+                </Link>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <p className="small muted module-content-note">{CONTENT_NOTE}</p>
     </div>
   );
 }
@@ -84,55 +79,53 @@ export function ModulePage() {
         <p className="lede">{mod.subtitle}</p>
       </div>
 
-      <div className="card" style={{ marginBottom: 14 }}>
-        <h2>Learning objectives</h2>
-        <ul style={{ margin: 0, paddingLeft: "1.2em" }}>
-          {mod.objectives.map((o) => (
-            <li key={o}>{o}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="card" style={{ marginBottom: 14 }}>
+      <section className="card module-lessons" aria-labelledby="module-lessons-title">
         <div className="row between">
-          <h2 style={{ margin: 0 }}>Lessons</h2>
-          <span className="small muted">
-            {p.done}/{p.total} completed
-          </span>
+          <h2 id="module-lessons-title">Lessons</h2>
+          <span className="small muted">{p.done} of {p.total} completed</span>
         </div>
-        <div style={{ marginTop: 8 }}>
-          <ProgressBar pct={p.pct} label="Lesson progress" />
-        </div>
-        <ul style={{ listStyle: "none", padding: 0, margin: "14px 0 0" }}>
-          {mod.lessons.map((l, i) => {
-            const done = Boolean(state.lessons[l.id]);
+        <ProgressBar pct={p.pct} label="Lesson progress" />
+        <ol className="module-lesson-list">
+          {mod.lessons.map((lesson, index) => {
+            const done = Boolean(state.lessons[lesson.id]);
+            const bookmarked = state.bookmarks.some((bookmark) => bookmark.kind === "lesson" && bookmark.refId === lesson.id);
             return (
-              <li key={l.id} style={{ borderBottom: "1px solid var(--border)", padding: "10px 0" }}>
-                <div className="row between">
-                  <div>
-                    <Link to={`/modules/${mod.id}/lessons/${l.id}`} style={{ fontWeight: 600 }}>
-                      {done ? "✓ " : ""}
-                      {i + 1}. {l.title}
-                    </Link>
-                    <div className="small muted">{l.minutes} min - {l.objectives[0]}</div>
-                  </div>
-                  <div className="row">
-                    {l.blocks.some((b) => b.kind === "diagram") && <span className="chip chip-accent">visual</span>}
-                    <button
-                      type="button"
-                      className="chip chip-button"
-                      aria-pressed={state.bookmarks.some((b) => b.kind === "lesson" && b.refId === l.id)}
-                      onClick={() => dispatch({ type: "toggleBookmark", kind: "lesson", refId: l.id })}
-                    >
-                      bookmark
-                    </button>
-                  </div>
-                </div>
+              <li key={lesson.id}>
+                <Link to={`/modules/${mod.id}/lessons/${lesson.id}`} className="module-lesson-link">
+                  <span className="module-lesson-number" data-done={done} aria-hidden>{done ? <Check size={17} /> : index + 1}</span>
+                  <span>
+                    <strong>{lesson.title}</strong>
+                    <span className="module-lesson-objective">{lesson.minutes} min · {lesson.objectives[0]}</span>
+                    {done && <span className="visually-hidden">Completed</span>}
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-ghost lesson-bookmark"
+                  aria-label={`Bookmark ${lesson.title}`}
+                  aria-pressed={bookmarked}
+                  onClick={() => dispatch({ type: "toggleBookmark", kind: "lesson", refId: lesson.id })}
+                >
+                  <Bookmark size={19} aria-hidden />
+                </button>
               </li>
             );
           })}
+        </ol>
+      </section>
+
+      <section className="card module-objectives" aria-labelledby="module-objectives-title">
+        <h2 id="module-objectives-title">Learning objectives</h2>
+        <ul>
+          {mod.objectives.map((objective) => <li key={objective}>{objective}</li>)}
         </ul>
-      </div>
+        {mod.prereqIds.length > 0 && (
+          <div className="small muted module-prerequisites">
+            <span>Recommended first</span>
+            {mod.prereqIds.map((id) => <Link key={id} to={`/modules/${id}`}>{moduleById(id)?.title}</Link>)}
+          </div>
+        )}
+      </section>
 
       <div className="grid2">
         <div className="card">

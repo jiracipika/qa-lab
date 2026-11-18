@@ -28,7 +28,9 @@ test.describe("smoke: fresh learner", () => {
     await page.goto("/");
     const dialog = page.getByRole("dialog", { name: /Welcome to QABrew/ });
     await expect(dialog).toBeVisible();
-    await dialog.getByRole("button", { name: "Learn QA fundamentals" }).click();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("radio", { name: "Learn QA fundamentals" }).click();
     await dialog.getByRole("button", { name: /Start: Learn QA fundamentals/ }).click();
     await expect(dialog).toBeHidden();
     await expect(page.getByRole("heading", { name: /Why we test/ })).toBeVisible();
@@ -101,12 +103,21 @@ test.describe("smoke: mobile", () => {
       );
     });
     await page.goto("/");
+    await expect(page.getByRole("heading", { name: "Study dashboard" })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(1);
     await page.getByRole("button", { name: "Open menu" }).click();
     await expect(page.getByRole("button", { name: "Close menu" })).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
+    const menu = page.getByRole("button", { name: "Open menu" });
+    await expect(menu).toBeFocused();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+
+    await menu.click();
+    await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Modules" }).click();
+    await expect(page.getByRole("dialog", { name: "Navigation menu" })).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Learning modules" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Open module A, Testing fundamentals" })).toBeVisible();
     await assertNoErrors();
   });
 });

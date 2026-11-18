@@ -88,7 +88,7 @@ function ConceptReview() {
           bookmarked only
         </button>
         <span className="spacer" />
-        <span className="chip chip-accent">{queue.length} due now</span>
+        <span className="chip chip-accent">{queue.length} {queue.length === 1 ? "card" : "cards"} to study</span>
         {doneCount > 0 && <span className="chip">{doneCount} reviewed this session</span>}
       </div>
 
