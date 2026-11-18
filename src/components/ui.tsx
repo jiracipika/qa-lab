@@ -6,15 +6,16 @@ import React from "react";
 
 /** QABrew mark: a flask of brewing quality with a passing check. */
 export function BrandMark({ size = 34 }: { size?: number }) {
+  const clipId = React.useId();
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
       <defs>
-        <clipPath id="qb-flask">
+        <clipPath id={clipId}>
           <path d="M26 11h12v10.5l9.4 18.8a9.6 9.6 0 0 1-8.7 13.7H25.3a9.6 9.6 0 0 1-8.7-13.7L26 21.5z" />
         </clipPath>
       </defs>
       <path d="M26 11h12v10.5l9.4 18.8a9.6 9.6 0 0 1-8.7 13.7H25.3a9.6 9.6 0 0 1-8.7-13.7L26 21.5z" fill="var(--bg-raised)" />
-      <rect x="10" y="39" width="44" height="20" fill="var(--accent)" clipPath="url(#qb-flask)" />
+      <rect x="10" y="39" width="44" height="20" fill="var(--accent)" clipPath={`url(#${clipId})`} />
       <circle cx="28.5" cy="43" r="2.4" fill="var(--bg-raised)" />
       <circle cx="36" cy="47" r="1.7" fill="var(--bg-raised)" />
       <path d="M26 11h12v10.5l9.4 18.8a9.6 9.6 0 0 1-8.7 13.7H25.3a9.6 9.6 0 0 1-8.7-13.7L26 21.5z" fill="none" stroke="var(--accent)" strokeWidth="3.5" strokeLinejoin="round" />

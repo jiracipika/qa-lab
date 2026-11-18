@@ -1,8 +1,23 @@
 # QABrew redesign - design and implementation plan
 
-Status: plan locked 2026-11-06, then implemented in the same pass. This file is the
-design contract: tokens and rules below are what the UI must obey. Supersedes the
-visual direction described in README (functionality notes there still apply).
+The paper, ink, and blue workbook identity carries through the study dashboard and
+curriculum. The sections below describe the original 2026-11-06 design and its
+curriculum and storage contracts. The current layout uses the following refinements.
+
+- The dashboard pairs a blue next-lesson panel with real lesson progress, the current
+  streak, and the last seven days of study activity. Review, the daily challenge, and
+  the mistake notebook sit above the boundary playground. Scheduled reviews are
+  counted separately from new flashcards.
+- The modules catalog uses a responsive grid with an “Up next” module that follows
+  the learner’s goal. Module pages put the lesson list first, with a separate bookmark
+  button for each lesson and recommended prerequisites under the learning objectives.
+- On desktop, the 224px sidebar groups Learn, Practice, and Reference links. On
+  mobile, a menu dialog contains the same navigation and a top-bar shortcut opens
+  Review. Native dialogs contain keyboard focus while navigation or onboarding is open.
+- The dashboard and catalog expand to 1320px. Other routes cap at 1060px, and lesson
+  text keeps its reading measure. Graph paper remains in the lesson artwork and
+  teaching interactions. Shared cards use a 14px radius on warm paper or midnight
+  ink surfaces.
 
 ## 1. Current UI findings (audit, verified)
 
